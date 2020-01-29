@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain
 {
-    public class CurrentHolding
+    public class Holdings
     {
         public long HoldingId { get; set; }
         public long StockId { get; set; }

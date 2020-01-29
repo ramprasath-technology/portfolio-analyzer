@@ -6,7 +6,12 @@ namespace Persistence.StockAnalyzerData
 {
     public class StockAnalyzerData
     {
-        private const string _selAllExistingPositionsForClient =
+        private const string _selAllExistingPositionsForUser =
             @"";
+
+        public void GetAllExistingPositionsForUser()
+        {
+
+        }
     }
 }

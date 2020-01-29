@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.StockAnalyzer
+namespace Application.StockAnalyzerService
 {
-    interface IStockAnalyzer
+    interface IStockAnalyzerService
     {
     }
 }
