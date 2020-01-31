@@ -24,9 +24,9 @@ namespace Persistence.HoldingsData
         #endregion
 
         #region Methods
-        public Domain.Holdings GetAllHoldings(ulong userId, uint shardNumber)
+        public List<Holdings> GetAllHoldings(ulong userId, uint shardNumber)
         {
-            return new Domain.Holdings();
+            return new List<Holdings>();
 
         }
         #endregion

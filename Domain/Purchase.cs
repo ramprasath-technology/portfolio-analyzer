@@ -10,8 +10,8 @@ namespace Domain
         public ulong UserId { get; set; }
         public ulong StockId { get; set; }
         public uint Quantity { get; set; }
-        public DateTime PurchaseDate { get; set; }
-        public decimal PurchasePrice { get; set; }
+        public DateTime Date { get; set; }
+        public decimal Price { get; set; }
         public uint ShardNumber { get; set; }
         public User User { get; set; }
         public Stock Stock { get; set; }

@@ -7,6 +7,6 @@ namespace Application.HoldingsService
 {
     public interface IHoldingsService
     {
-        Holdings GetHoldingsForUser(ulong userId);
+        List<Holdings> GetHoldingsForUser(ulong userId);
     }
 }

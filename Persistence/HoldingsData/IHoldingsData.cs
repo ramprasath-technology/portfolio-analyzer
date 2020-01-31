@@ -12,7 +12,7 @@ namespace Persistence.HoldingsData
         /// </summary>
         /// <param name="userId">User Id</param>
         /// <param name="shardNumber">Shard Number</param>
-        /// <returns>An object containing stock, purchase, and sale data</returns>
-        Domain.Holdings GetAllHoldings(ulong userId, uint shardNumber);
+        /// <returns>A list of objects containing stock, purchase, and sale data</returns>
+        List<Holdings> GetAllHoldings(ulong userId, uint shardNumber);
     }
 }

@@ -15,7 +15,7 @@ namespace Application.HoldingsService
             _holdingsData = holdingsData;
         }
 
-        public Holdings GetHoldingsForUser(ulong userId)
+        public List<Holdings> GetHoldingsForUser(ulong userId)
         {
             uint shardNumber = 1;
             return _holdingsData.GetAllHoldings(userId, shardNumber);
