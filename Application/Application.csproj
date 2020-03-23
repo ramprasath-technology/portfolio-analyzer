@@ -3,11 +3,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.1" />
     <PackageReference Include="MySql.Data" Version="8.0.19" />
+    <PackageReference Include="ThreeFourteen.AlphaVantage" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
+    <ProjectReference Include="..\PortfolioAnalyzer.Alphavantage\PortfolioAnalyzer.Alphavantage.csproj" />
+    <ProjectReference Include="..\PortfolioAnalyzer.FinanancialModelingPrep\PortfolioAnalyzer.FinanancialModelingPrep.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

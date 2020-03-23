@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Connection
+namespace Domain.DTO
 {
-    class IConnectionService
+    public class StockQuote
     {
     }
 }

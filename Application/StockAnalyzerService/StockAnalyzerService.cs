@@ -1,4 +1,5 @@
 ﻿using Application.HoldingsService;
+using Application.StockQuoteService;
 using Domain;
 using Domain.DTO;
 using System;
@@ -11,45 +12,90 @@ namespace Application.StockAnalyzerService
 {
     public class StockAnalyzerService
     {
-        private IHoldingsService _holdingsService;
+        private readonly IHoldingsService _holdingsService;
+        private readonly IStockQuoteService _stockQuoteService;
 
-        public StockAnalyzerService(IHoldingsService holdingsService)
+        public StockAnalyzerService(IHoldingsService holdingsService, IStockQuoteService stockQuoteService)
         {
             _holdingsService = holdingsService;
+            _stockQuoteService = stockQuoteService;
         }
 
         public async void GetComparisonWithSP500(ulong userId)
         {
             var userHoldings = _holdingsService.GetHoldingsForUser(userId);
-            var purchaseAndSaleDates = await GetPurchaseAndSaleDates(userHoldings);
+            var purchaseAndSaleDates = GetPurchaseAndSaleDates(userHoldings);
             var datePriceMappingTask = GetSP500ValuesForDates(purchaseAndSaleDates);
-            var stockTransactionDataTask = BuildStockTransactionData(userHoldings);
+            var stockTransactionData = BuildStockTransactionData(userHoldings);
             var datePriceMapping = await datePriceMappingTask;
-            var stockTransactionData = await stockTransactionDataTask;
-            var transactionDataWithPrices = await AddSP500DataToTransactionData(stockTransactionData, datePriceMapping);
+            AddSP500DataToTransactionData(stockTransactionData, datePriceMapping);
+            AssignCurrentStockValue(stockTransactionData);
+            var annualizedReturnComputationTask = Task.Run(() => ComputeAnnualizedReturn(stockTransactionData));
+            var annualizedSP500ReturnComputationTask = Task.Run(() => ComputeAnnualizedSP500Return(stockTransactionData));
+            await annualizedReturnComputationTask;
+            await annualizedSP500ReturnComputationTask;
         }
 
-        private async void ComputeReturnsForUserHoldings(HoldingsSP500Mapping[] holdingsSP500Mapping)
+        private void AssignCurrentStockValue(HoldingsSP500Mapping[] holdingsSP500Mapping)
         {
-            Parallel.ForEach(holdingsSP500Mapping, (currentMapping, state, index) =>
-            {
+            var stocksStillHeld = new HashSet<string>();
 
+            Parallel.ForEach(holdingsSP500Mapping, (currenHolding) =>
+            {
+                if(!currenHolding.SaleDate.HasValue)
+                {
+                    stocksStillHeld.Add(currenHolding.Ticker);
+                }
+            });
+
+            var latestQuotes = _stockQuoteService.GetLatestQuoteForStocks(stocksStillHeld).Result;
+
+            Parallel.ForEach(holdingsSP500Mapping, (currentHolding) =>
+            {
+                if(latestQuotes.ContainsKey(currentHolding.Ticker))
+                {
+                    currentHolding.CurrentStockValue = latestQuotes[currentHolding.Ticker];
+                }
+                else
+                {
+                    currentHolding.CurrentStockValue = 0;
+                }
             });
         }
 
-        private decimal ComputeAnnualizedReturn(decimal purchasePrice, decimal salePrice, DateTime purchaseDate, DateTime saleDateOrCurrentDate)
+        private void ComputeAnnualizedReturn(HoldingsSP500Mapping[] holdingsSP500Mapping)
         {
             const short numberOfDaysInYear = 365;
 
-            var numberOfDaysStockHeld = (saleDateOrCurrentDate - purchaseDate).TotalDays;
-            var daysRatio = numberOfDaysInYear / numberOfDaysStockHeld;
-            var cumulativeReturn = (salePrice - purchasePrice) / purchasePrice;
-            var annualizedReturn = Math.Pow(1 + Decimal.ToDouble(cumulativeReturn), daysRatio) - 1;
-
-            return Convert.ToDecimal(annualizedReturn);
+            for(var i = 0; i < holdingsSP500Mapping.Length; i++)
+            {
+                var saleDateOrCurrentDate = holdingsSP500Mapping[i].SaleDate ?? DateTime.Now;
+                var numberOfDaysStockHeld = (saleDateOrCurrentDate - holdingsSP500Mapping[i].PurchaseDate).TotalDays;
+                var daysRatio = numberOfDaysInYear / numberOfDaysStockHeld;
+                var salePriceOrCurrentPrice = holdingsSP500Mapping[i].SaleValue ?? holdingsSP500Mapping[i].CurrentStockValue;
+                var cumulativeReturn = (salePriceOrCurrentPrice.Value - holdingsSP500Mapping[i].PurchaseValue) / holdingsSP500Mapping[i].PurchaseValue;
+                var annualizedReturn = Math.Pow(1 + Decimal.ToDouble(cumulativeReturn), daysRatio) - 1;
+                holdingsSP500Mapping[i].AnnualizedStockReturn = Convert.ToDecimal(annualizedReturn);
+            }
         }
 
-        private async Task<List<DateTime>> GetPurchaseAndSaleDates(List<Holdings> userHoldings)
+        private void ComputeAnnualizedSP500Return(HoldingsSP500Mapping[] holdingsSP500Mapping)
+        {
+            const short numberOfDaysInYear = 365;
+
+            for (var i = 0; i < holdingsSP500Mapping.Length; i++)
+            {
+                var saleDateOrCurrentDate = holdingsSP500Mapping[i].SaleDate ?? DateTime.Now;
+                var numberOfDaysStockHeld = (saleDateOrCurrentDate - holdingsSP500Mapping[i].PurchaseDate).TotalDays;
+                var daysRatio = numberOfDaysInYear / numberOfDaysStockHeld;
+                var salePriceOrCurrentPrice = holdingsSP500Mapping[i].SaleDaySP500Value ?? holdingsSP500Mapping[i].CurrentSP500Value;
+                var cumulativeReturn = (salePriceOrCurrentPrice.Value - holdingsSP500Mapping[i].PurchaseValue) / holdingsSP500Mapping[i].PurchaseValue;
+                var annualizedReturn = Math.Pow(1 + Decimal.ToDouble(cumulativeReturn), daysRatio) - 1;
+                holdingsSP500Mapping[i].AnnualizedSP500Return = Convert.ToDecimal(annualizedReturn);
+            }
+        }
+
+        private List<DateTime> GetPurchaseAndSaleDates(List<Holdings> userHoldings)
         {
             var purchaseAndSaleDates = new HashSet<DateTime>();
 
@@ -62,7 +108,7 @@ namespace Application.StockAnalyzerService
             return purchaseAndSaleDates.AsParallel().ToList();
         }
 
-        private async Task<HoldingsSP500Mapping[]> AddSP500DataToTransactionData(HoldingsSP500Mapping[] holdingsSP500Mappings, Dictionary<DateTime, decimal> datePriceMapping)
+        private void AddSP500DataToTransactionData(HoldingsSP500Mapping[] holdingsSP500Mappings, Dictionary<DateTime, decimal> datePriceMapping)
         {
             Parallel.ForEach(holdingsSP500Mappings, (currentMapping, state, index) => 
             {
@@ -71,16 +117,16 @@ namespace Application.StockAnalyzerService
                 {
                     currentMapping.PurchaseDaySP500Value = price;
                 }
-                if(datePriceMapping.TryGetValue(currentMapping.SaleDate, out price))
+             
+                if (currentMapping.SaleDate.HasValue && datePriceMapping.TryGetValue(currentMapping.SaleDate.Value, out price))
                 {
                     currentMapping.SaleDaySP500Value = price;
-                }               
+                }
+                
             });
-
-            return holdingsSP500Mappings;
         }
 
-        private async Task<HoldingsSP500Mapping[]> BuildStockTransactionData(List<Holdings> userHoldings)
+        private HoldingsSP500Mapping[] BuildStockTransactionData(List<Holdings> userHoldings)
         {
             var holdingsSP500Mappings = new HoldingsSP500Mapping[userHoldings.Count];
 
