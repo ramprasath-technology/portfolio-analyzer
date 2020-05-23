@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortfolioAnalyzer.Alphavantage", "PortfolioAnalyzer.Alphavantage\PortfolioAnalyzer.Alphavantage.csproj", "{1158C62D-602D-4E13-9C20-60473C9B03CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortfolioAnalyzer.FinanancialModelingPrep", "PortfolioAnalyzer.FinanancialModelingPrep\PortfolioAnalyzer.FinanancialModelingPrep.csproj", "{B0FEEA1C-C416-4712-A0E9-1B9157BCF92C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortfolioAnalyzer.FinanancialModelingPrep", "PortfolioAnalyzer.FinanancialModelingPrep\PortfolioAnalyzer.FinanancialModelingPrep.csproj", "{B0FEEA1C-C416-4712-A0E9-1B9157BCF92C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

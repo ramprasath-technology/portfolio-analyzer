@@ -9,8 +9,10 @@ namespace Application.StockService
 {
     public interface IStockService
     {
-        Task<ulong> AddStock(ulong userId, Stock stock);
+        Task<Stock> AddStock(ulong userId, Stock stock);
         Task<CompanyProfile> GetCompanyProfile(string ticker);
         Task<ulong> GetStockIdByTicker(ulong userId, string ticker);
+        Task<Stock> GetStockByTicker(ulong userId, string ticker);
+        Task<IEnumerable<Stock>> GetStocksById(ulong userId, IEnumerable<ulong> stockId);
     }
 }

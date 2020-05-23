@@ -9,7 +9,9 @@ namespace Persistence.StockPurchaseData
 {
     public interface IStockPurchaseData
     {
-        Task<ulong> AddPurchase(Purchase purchase, IDbConnection connection);
+        Task<Purchase> AddPurchase(Purchase purchase, IDbConnection connection);
+        Task<IEnumerable<Purchase>> GetPurchasesById(IDbConnection connection,
+            IEnumerable<ulong> purchaseId);
 
     }
 }

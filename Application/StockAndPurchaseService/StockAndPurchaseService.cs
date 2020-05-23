@@ -1,4 +1,5 @@
-﻿using Application.StockPurchaseService;
+﻿using Application.StockHoldingService;
+using Application.StockPurchaseService;
 using Application.StockService;
 using Domain;
 using Domain.DTO;
@@ -13,31 +14,47 @@ namespace Application.StockAndPurchaseService
     {
         private readonly IStockService _stockService;
         private readonly IStockPurchaseService _stockPurchaseService;
+        private readonly IStockHoldingService _stockHoldingService;
 
-        public StockAndPurchaseService(IStockService stockService, IStockPurchaseService stockPurchaseService)
+        public StockAndPurchaseService(IStockService stockService, IStockPurchaseService stockPurchaseService, IStockHoldingService stockHoldingService)
         {
             _stockService = stockService;
             _stockPurchaseService = stockPurchaseService;
+            _stockHoldingService = stockHoldingService;
         }
 
-        public async Task AddStockAndPurchaseInfo(StockPurchase stockPurchase)
+        public async Task<StockPurchase> AddStockAndPurchaseInfo(StockPurchase stockPurchase)
         {
-            var stockId = await _stockService.GetStockIdByTicker(stockPurchase.UserId, stockPurchase.Ticker);
+            stockPurchase.Stock = await AddStockInfo(stockPurchase);
+            stockPurchase.StockId = stockPurchase.Stock.StockId;
+            stockPurchase.Purchase = await AddPurchaseInfo(stockPurchase.StockId, stockPurchase);
 
-            if(stockId == 0)
+            return stockPurchase;
+        }
+
+        private async Task<Stock> AddStockInfo(StockPurchase stockPurchase)
+        {
+            var stock = await _stockService.GetStockByTicker(stockPurchase.UserId, stockPurchase.Ticker);
+
+            if (stock == null)
             {
                 var companyProfile = await _stockService.GetCompanyProfile(stockPurchase.Ticker);
-                if(companyProfile == null || companyProfile.Profile == null)
+                if (companyProfile == null || companyProfile.Profile == null)
                 {
                     throw new ArgumentException($"Ticket symbol is not valid");
                 }
 
-                var stock = new Stock();
+                stock = new Stock();
                 stock.Ticker = stockPurchase.Ticker;
                 stock.CompanyName = companyProfile.Profile.CompanyName;
-                stockId = await _stockService.AddStock(stockPurchase.UserId, stock);
-            }          
+                await _stockService.AddStock(stockPurchase.UserId, stock);
+            }
 
+            return stock;
+        }
+
+        private async Task<Purchase> AddPurchaseInfo(ulong stockId, StockPurchase stockPurchase)
+        {
             var purchase = new Purchase();
             purchase.Comment = stockPurchase.Comment;
             purchase.Date = stockPurchase.PurchaseDate;
@@ -46,7 +63,9 @@ namespace Application.StockAndPurchaseService
             purchase.StockId = stockId;
             purchase.UserId = stockPurchase.UserId;
 
-            await _stockPurchaseService.AddStockPurchase(stockPurchase.UserId, purchase);
+            purchase = await _stockPurchaseService.AddStockPurchase(stockPurchase.UserId, purchase);
+
+            return purchase;
         }
     }
 }

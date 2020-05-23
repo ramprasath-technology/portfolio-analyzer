@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.ConfigService;
 using Application.Connection;
+using Application.StockHoldingService;
+using Application.StockAnalyzerService;
 using Application.StockAndPurchaseService;
 using Application.StockPurchaseService;
 using Application.StockQuoteService;
 using Application.StockService;
+using Application.UserService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,10 +19,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Persistence.HoldingsData;
 using Persistence.StockData;
 using Persistence.StockPurchaseData;
+using Persistence.UserData;
 using PortfolioAnalyzer.AlphavantageAnalyzerService;
 using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService;
+using Application.StockIndexTickerService;
+using Application.StockIndexValueService;
+using Persistence.StockIndexTickerData;
+using Persistence.StockIndexValueData;
+using Application.MarketDataService;
+using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService.DataOrchestrationService;
+using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService.LastStockQuoteService;
+using Application.StockReturnsService;
+using Persistence.StockSaleData;
+using Application.StockSaleService;
+using Application.StockIndexComparisonService;
 
 namespace API
 {
@@ -45,11 +61,28 @@ namespace API
 
             services.AddSingleton<IStockQuoteService, StockQuoteService>();
             services.AddSingleton<IStockPurchaseService, StockPurchaseService>();
+            services.AddSingleton<IStockSaleService, StockSaleService>();
             services.AddSingleton<IStockService, StockService>();
             services.AddSingleton<IStockAndPurchaseService, StockAndPurchaseService>();
+            services.AddSingleton<IStockIndexComparisonService, StockIndexComparisonService>();
+            services.AddSingleton<IStockReturnsService, StockReturnsService>();
+            services.AddSingleton<IStockAnalyzerService, StockAnalyzerService>();
+            services.AddSingleton<IStockHoldingService, StockHoldingService>();
+            services.AddSingleton<IStockIndexTickerService, StockIndexTickerService>();
+            services.AddSingleton<IStockIndexValueService, StockIndexValueService>();
+            services.AddSingleton<IMarketDataService, MarketDataService>();
+            services.AddSingleton<IDataOrchestrationService, DataOrchestrationService>();
+            services.AddSingleton<IDailyStockPriceService, DailyStockPriceService>();
+            services.AddSingleton<ILastStockQuoteService, LastStockQuoteService>();
+            services.AddSingleton<IUserService, UserService>();
 
             services.AddSingleton<IStockPurchaseData, StockPurchaseData>();
+            services.AddSingleton<IStockSaleData, StockSaleData>();
             services.AddSingleton<IStockData, StockData>();
+            services.AddSingleton<IStockIndexTickerData, StockIndexTickerData>();
+            services.AddSingleton<IStockIndexValueData, StockIndexValueData>();
+            services.AddSingleton<IUserData, UserData>();
+            services.AddSingleton<IHoldingsData, HoldingsData>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

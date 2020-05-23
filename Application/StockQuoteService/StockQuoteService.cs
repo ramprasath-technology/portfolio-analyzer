@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Connection;
+using Application.MarketDataService;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using PortfolioAnalyzer.AlphavantageAnalyzerService;
@@ -14,11 +15,15 @@ namespace Application.StockQuoteService
     {
         private readonly IAlphaVantageAnalyzerService _alphaVantageAnalyzerService;
         private readonly IConnectionService _connectionService;
+        private readonly IMarketDataService _marketDataService;
 
-        public StockQuoteService(IAlphaVantageAnalyzerService alphaVantageAnalyzerService, IConnectionService connectionService)
+        public StockQuoteService(IAlphaVantageAnalyzerService alphaVantageAnalyzerService, 
+            IConnectionService connectionService,
+            IMarketDataService marketDataService)
         {
             _alphaVantageAnalyzerService = alphaVantageAnalyzerService;
             _connectionService = connectionService;
+            _marketDataService = marketDataService;
         }
 
         public async Task<Dictionary<string, decimal>> GetLatestQuoteForStocks(IEnumerable<string> tickers)

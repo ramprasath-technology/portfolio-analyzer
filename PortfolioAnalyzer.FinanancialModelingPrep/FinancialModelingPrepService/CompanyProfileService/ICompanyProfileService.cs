@@ -8,6 +8,6 @@ namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService
 {
     public interface ICompanyProfileService
     {
-        Task<CompanyProfile> GetCompanyProfile(string url, string tickers);
+        Task<CompanyProfile> GetCompanyProfile(string url, string apiKey, string ticker);
     }
 }

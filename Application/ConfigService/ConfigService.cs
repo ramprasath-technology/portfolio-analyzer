@@ -18,5 +18,20 @@ namespace Application.ConfigService
         {
             return _configuration.GetSection("URLs").GetSection("FinancialModelingPrepProfile").Value;
         }
+
+        public string GetDailyPriceUrl()
+        {
+            return _configuration.GetSection("URLs").GetSection("FinancialModelingPrepDailyPrice").Value;
+        }
+
+        public string GetStockQuoteUrl()
+        {
+            return _configuration.GetSection("URLs").GetSection("FinancialModelingPrepLastQuotePrice").Value;
+        }
+
+        public string GetFinancialModelingPrepKey()
+        {
+            return _configuration.GetSection("APIKeys").GetSection("FinancialModelingPrep").Value;
+        }
     }
 }

@@ -9,6 +9,5 @@ namespace Domain
         public ulong StockId { get; set; }
         public string Ticker { get; set; }
         public string CompanyName { get; set; }
-        public uint ShardNumber { get; set; }
     }
 }

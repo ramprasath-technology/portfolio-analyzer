@@ -25,9 +25,20 @@ namespace Persistence.StockPurchaseData
                          ?date,
                          ?comment);
             SELECT LAST_INSERT_ID();";
-        #endregion
 
-        public async Task<ulong> AddPurchase(Purchase purchase, IDbConnection connection)
+        private const string selPurchasesById =
+            @"SELECT s.comment AS Comment,
+                   s.`date` AS Date,
+                   s.price AS Price,
+                   s.purchase_id AS PurchaseId,
+                   s.stock_id AS StockId,
+                   s.quantity AS Quantity,
+                   s.user_id AS UserId
+              FROM stock_stock_purchase s
+             WHERE s.purchase_id IN ?purchaseId;";
+                    #endregion
+
+        public async Task<Purchase> AddPurchase(Purchase purchase, IDbConnection connection)
         {
             connection.Open();
 
@@ -40,10 +51,24 @@ namespace Persistence.StockPurchaseData
             dynamicParams.Add("comment", purchase.Comment);
 
             var purchaseId = await connection.QueryFirstAsync<ulong>(insPurchaseData, dynamicParams);
+            purchase.PurchaseId = purchaseId;
 
             connection.Close();
 
-            return purchaseId;
+            return purchase;
+        }
+
+        public async Task<IEnumerable<Purchase>> GetPurchasesById(IDbConnection connection,
+            IEnumerable<ulong> purchaseId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("purchaseId", purchaseId);
+
+            connection.Open();
+            var purchases = await connection.QueryAsync<Purchase>(selPurchasesById, parameters);
+            connection.Close();
+
+            return purchases;
         }
 
 

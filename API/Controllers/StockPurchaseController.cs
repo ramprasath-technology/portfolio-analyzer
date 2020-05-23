@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.StockAndPurchaseService;
+using Application.StockHoldingService;
 using Application.StockPurchaseService;
 using Application.StockService;
 using Domain.DTO;
@@ -16,9 +17,12 @@ namespace API.Controllers
     public class StockPurchaseController : ControllerBase
     {
         private readonly IStockAndPurchaseService _stockAndPurchaseService;
-        public StockPurchaseController(IStockAndPurchaseService stockAndPurchaseService)
+        private readonly IStockHoldingService _stockHoldingService;
+        public StockPurchaseController(IStockAndPurchaseService stockAndPurchaseService, 
+            IStockHoldingService stockHoldingService)
         {
             _stockAndPurchaseService = stockAndPurchaseService;
+            _stockHoldingService = stockHoldingService;
         }
 
         // POST: api/StockPurchase
@@ -33,6 +37,8 @@ namespace API.Controllers
                 }
 
                 await _stockAndPurchaseService.AddStockAndPurchaseInfo(purchaseData);
+                await _stockHoldingService.AddPurchaseToHoldings(purchaseData.UserId, purchaseData.Purchase);
+
                 return Ok();
             }
             catch(ArgumentException ex)

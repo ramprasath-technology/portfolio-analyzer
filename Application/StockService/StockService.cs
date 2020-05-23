@@ -26,11 +26,26 @@ namespace Application.StockService
             _companyProfileService = companyProfileService;
         }
 
-        public async Task<ulong> AddStock(ulong userId, Stock stock)
+        public async Task<Stock> AddStock(ulong userId, Stock stock)
         {
-            var stockId = await _stockData.AddStock(stock, _connectionService.GetConnection(userId));
+            var connection = _connectionService.GetConnection(userId);
 
-            return stockId;
+            await _stockData.AddStock(_connectionService.GetConnection(userId), stock);
+
+            _connectionService.DisposeConnection(connection);
+
+            return stock;
+        }
+
+        public async Task<Stock> GetStockByTicker(ulong userId, string ticker)
+        {
+            var connection = _connectionService.GetConnection(userId);
+
+            var stock = await _stockData.GetStockByTicker(connection, ticker);
+
+            _connectionService.DisposeConnection(connection);
+
+            return stock;
         }
 
         public async Task<ulong> GetStockIdByTicker(ulong userId, string ticker)
@@ -43,9 +58,21 @@ namespace Application.StockService
         public async Task<CompanyProfile> GetCompanyProfile(string ticker)
         {
             var url = _configService.GetCompanyProfileUrl();
-            var companyProfile = await _companyProfileService.GetCompanyProfile(url, ticker);
+            var apiKey = _configService.GetFinancialModelingPrepKey();
+            var companyProfile = await _companyProfileService.GetCompanyProfile(url, apiKey, ticker);
 
             return companyProfile;
+        }
+
+        public async Task<IEnumerable<Stock>> GetStocksById(ulong userId, IEnumerable<ulong> stockId)
+        {
+            var connection = _connectionService.GetConnection(userId);
+
+            var stocks = await _stockData.GetStocksById(connection, stockId);
+
+            _connectionService.DisposeConnection(connection);
+
+            return stocks;
         }
     }
 }

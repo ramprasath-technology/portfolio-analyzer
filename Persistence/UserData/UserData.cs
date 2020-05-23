@@ -1,23 +1,55 @@
-﻿using System;
+﻿using Domain;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
+using System.Threading.Tasks;
+using Dapper;
 
 namespace Persistence.UserData
 {
-    public class UserData
+    public class UserData : IUserData
     {
-        private const string _addUser =
-            @"INSERT INTO portfolio_analyzer.user_user (user_name, shard_number) VALUES (?userName, ?shardNumber)";
+        #region Queries
+        private const string insUser =
+            @"INSERT INTO user_user(user_user_name)
+                VALUES (?userName);
+            SELECT LAST_INSERT_ID();";
 
-        private const string _getUserById =
-            @"SELECT 
-                *
-            FROM
-                portfolio_analyzer.user_user
-            WHERE
-                user_id = ?userId";
+        private const string selUsername =
+            @"SELECT EXISTS
+              (SELECT 1
+                 FROM user_username u
+                WHERE u.username = ?username
+                LIMIT 1)";
+        #endregion
+
+        public async Task<ulong> AddUser(User user, IDbConnection connection)
+        {
+            connection.Open();
+
+            var dynamicParams = new DynamicParameters();
+            dynamicParams.Add("userName", user.UserName);
+
+            var userId = await connection.QueryFirstAsync<ulong>(insUser, dynamicParams);
+
+            return userId;
+        }
+
+        public async Task<bool> CheckIfUsernameExists(string username, IDbConnection connection)
+        {
+            connection.Open();
+
+            var dynamicParams = new DynamicParameters();
+            dynamicParams.Add("username", username);
+
+            var userExists = await connection.QueryFirstAsync<bool>(selUsername, dynamicParams);
+
+            return userExists;
+        }
 
 
-        
+
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.HoldingsService;
+﻿using Application.StockHoldingService;
 using Application.StockQuoteService;
 using Domain;
 using Domain.DTO;
@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace Application.StockAnalyzerService
 {
-    public class StockAnalyzerService
+    public class StockAnalyzerService : IStockAnalyzerService
     {
-        private readonly IHoldingsService _holdingsService;
+        private readonly IStockHoldingService _holdingsService;
         private readonly IStockQuoteService _stockQuoteService;
 
-        public StockAnalyzerService(IHoldingsService holdingsService, IStockQuoteService stockQuoteService)
+        public StockAnalyzerService(IStockHoldingService holdingsService, IStockQuoteService stockQuoteService)
         {
             _holdingsService = holdingsService;
             _stockQuoteService = stockQuoteService;
         }
 
-        public async void GetComparisonWithSP500(ulong userId)
+        public async Task<HoldingsSP500Mapping[]> GetComparisonWithSP500(ulong userId)
         {
-            var userHoldings = _holdingsService.GetHoldingsForUser(userId);
+            /*var userHoldings = _holdingsService.GetHoldingsForUser(userId);
             var purchaseAndSaleDates = GetPurchaseAndSaleDates(userHoldings);
             var datePriceMappingTask = GetSP500ValuesForDates(purchaseAndSaleDates);
             var stockTransactionData = BuildStockTransactionData(userHoldings);
@@ -33,7 +33,9 @@ namespace Application.StockAnalyzerService
             var annualizedReturnComputationTask = Task.Run(() => ComputeAnnualizedReturn(stockTransactionData));
             var annualizedSP500ReturnComputationTask = Task.Run(() => ComputeAnnualizedSP500Return(stockTransactionData));
             await annualizedReturnComputationTask;
-            await annualizedSP500ReturnComputationTask;
+            await annualizedSP500ReturnComputationTask;*/
+
+            return new HoldingsSP500Mapping[1];
         }
 
         private void AssignCurrentStockValue(HoldingsSP500Mapping[] holdingsSP500Mapping)
@@ -98,12 +100,15 @@ namespace Application.StockAnalyzerService
         private List<DateTime> GetPurchaseAndSaleDates(List<Holdings> userHoldings)
         {
             var purchaseAndSaleDates = new HashSet<DateTime>();
-
+            /*
             Parallel.ForEach(userHoldings, (currentHolding) =>
            {
-               purchaseAndSaleDates.Add(currentHolding.Purchase.Date);
+               purchaseAndSaleDates.Add(currentHolding.HoldingDetails.pur.Date);
                purchaseAndSaleDates.Add(currentHolding.Sale.Date);
            });
+           */
+
+            return new List<DateTime>();
 
             return purchaseAndSaleDates.AsParallel().ToList();
         }
@@ -129,7 +134,7 @@ namespace Application.StockAnalyzerService
         private HoldingsSP500Mapping[] BuildStockTransactionData(List<Holdings> userHoldings)
         {
             var holdingsSP500Mappings = new HoldingsSP500Mapping[userHoldings.Count];
-
+            /*
             Parallel.ForEach(userHoldings, (currentHolding, state, index) =>
             {
                 holdingsSP500Mappings[index] = new HoldingsSP500Mapping()
@@ -142,7 +147,7 @@ namespace Application.StockAnalyzerService
                     UserId = currentHolding.UserId
                 };
             });
-
+            */
             return holdingsSP500Mappings;
         }
 

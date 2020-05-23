@@ -8,6 +8,6 @@ namespace Application.StockAndPurchaseService
 {
     public interface IStockAndPurchaseService
     {
-        Task AddStockAndPurchaseInfo(StockPurchase stockPurchase);
+        Task<StockPurchase> AddStockAndPurchaseInfo(StockPurchase stockPurchase);
     }
 }

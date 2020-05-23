@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Application.Connection
 {
@@ -16,12 +17,38 @@ namespace Application.Connection
             _configuration = configuration;
         }
 
+        public void DisposeConnection(IDbConnection connection)
+        {
+            connection.Dispose();
+        }
+
        public IDbConnection GetConnection(ulong userId)
        {
             var connection = new MySqlConnection();
             connection.ConnectionString = GetConnectionString(userId);
             return connection;
        }
+
+        public IDbConnection GetOpenConnection(ulong userId)
+        {
+            var connection = new MySqlConnection();
+            connection.ConnectionString = GetConnectionString(userId);
+            connection.Open();
+            return connection;
+        }
+
+        public IDbConnection GetConnectionToCommonShard()
+        {
+            var connection = new MySqlConnection();
+            connection.ConnectionString = GetCommonShardConnectionString();
+            return connection;
+        }
+
+        private string GetCommonShardConnectionString()
+        {
+            var connectionStringName = $"ConnectionString0";
+            return _configuration.GetSection("DataBase").GetSection(connectionStringName).Value;
+        }
 
         private string GetConnectionString(ulong userId)
         {

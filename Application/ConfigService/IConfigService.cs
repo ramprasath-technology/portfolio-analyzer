@@ -7,5 +7,8 @@ namespace Application.ConfigService
     public interface IConfigService
     {
         string GetCompanyProfileUrl();
+        string GetDailyPriceUrl();
+        string GetStockQuoteUrl();
+        string GetFinancialModelingPrepKey();
     }
 }

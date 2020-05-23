@@ -19,6 +19,8 @@ namespace PortfolioAnalyzer.AlphavantageAnalyzerService
             return latestStockQuote;
         }
 
+
+
         /*public void GetLatestQuoteForStock(string ticker)
         {
             var client = new Http

@@ -18,10 +18,26 @@ namespace Application.StockPurchaseService
             _connectionService = connectionService;
         }
 
-        public async Task<ulong> AddStockPurchase(ulong userId, Purchase purchase)
+        public async Task<Purchase> AddStockPurchase(ulong userId, Purchase purchase)
         {
-            var purchaseId = await _stockPurchaseData.AddPurchase(purchase, _connectionService.GetConnection(userId));
-            return purchaseId;
+            var connection = _connectionService.GetConnection(userId);
+
+            await _stockPurchaseData.AddPurchase(purchase, connection);
+
+            _connectionService.DisposeConnection(connection);
+
+            return purchase;
+        }
+
+        public async Task<IEnumerable<Purchase>> GetPurchasesById(ulong userId, IEnumerable<ulong> purchaseId)
+        {
+            var connection = _connectionService.GetConnection(userId);
+
+            var purchases = await _stockPurchaseData.GetPurchasesById(connection, purchaseId);
+
+            _connectionService.DisposeConnection(connection);
+
+            return purchases;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Application.StockPurchaseService
 {
     public interface IStockPurchaseService
     {
-        Task<ulong> AddStockPurchase(ulong userId, Purchase purchase);
+        Task<Purchase> AddStockPurchase(ulong userId, Purchase purchase);
+        Task<IEnumerable<Purchase>> GetPurchasesById(ulong userId, IEnumerable<ulong> purchaseId);
     }
 }
