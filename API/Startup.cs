@@ -36,6 +36,9 @@ using Application.StockReturnsService;
 using Persistence.StockSaleData;
 using Application.StockSaleService;
 using Application.StockIndexComparisonService;
+using Application.StockTotalValueService;
+using Application.TotalValueComparisonService;
+using Application.PortfolioCompositionService;
 
 namespace API
 {
@@ -70,6 +73,9 @@ namespace API
             services.AddSingleton<IStockHoldingService, StockHoldingService>();
             services.AddSingleton<IStockIndexTickerService, StockIndexTickerService>();
             services.AddSingleton<IStockIndexValueService, StockIndexValueService>();
+            services.AddSingleton<IStockTotalValueService, StockTotalValueService>();
+            services.AddSingleton<ITotalValueComparisonService, TotalValueComparisonService>();
+            services.AddSingleton<IPortfolioCompositionService, PortfolioCompositionService>();
             services.AddSingleton<IMarketDataService, MarketDataService>();
             services.AddSingleton<IDataOrchestrationService, DataOrchestrationService>();
             services.AddSingleton<IDailyStockPriceService, DailyStockPriceService>();

@@ -24,11 +24,20 @@ namespace Application.StockHoldingService
 
         public async Task<IEnumerable<Holdings>> GetAllHoldingsForUser(ulong userId)
         {
-            var connection = _connectionService.GetConnection(userId);
-            var holdings = await _holdingsData.GetAllHoldingsForUser(connection, userId);
-            _connectionService.DisposeConnection(connection);
+            using (var connection = _connectionService.GetConnection(userId))
+            {
+                var holdings = await _holdingsData.GetAllHoldingsForUser(connection, userId);
+                return holdings;
+            }                
+        }
 
-            return holdings;
+        public async Task<IEnumerable<Holdings>> GetAllHoldingsForUserWithStockDetails(ulong userId)
+        {
+            using (var connection = _connectionService.GetConnection(userId))
+            {
+                var holdings = await _holdingsData.GetAllHoldingsForUserWithStockDetails(connection, userId);
+                return holdings;
+            }
         }
 
         public async Task AddPurchaseToHoldings(ulong userId, Purchase purchase)
@@ -48,6 +57,23 @@ namespace Application.StockHoldingService
             }
 
             _connectionService.DisposeConnection(connection);
+        }
+
+        public IEnumerable<ulong> GetPurchaseIdsFromHolding(IEnumerable<Holdings> holdings)
+        {
+            var purchaseIds = new HashSet<ulong>();
+
+            foreach (var holding in holdings)
+            {
+                var holdingsDetail = holding.HoldingDetails;
+
+                foreach (var holdingDetail in holdingsDetail)
+                {
+                    purchaseIds.Add(holdingDetail.PurchaseId);
+                }
+            }
+
+            return purchaseIds;
         }
 
         private async Task AddNewHoldingDetails(IDbConnection connection, ulong userId, ulong stockId, HoldingDetails holdingDetails)

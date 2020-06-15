@@ -8,6 +8,6 @@ namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService
 {
     public interface IDailyStockPriceService
     {
-        Task<DailyStockPrice> GetDailyStockPriceService(string baseUrl, string ticker, DateTime startDate, DateTime endDate);
+        Task<DailyStockPrice> GetDailyStockPriceService(string baseUrl, string ticker, string apiKey, DateTime startDate, DateTime endDate);
     }
 }

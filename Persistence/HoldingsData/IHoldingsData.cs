@@ -42,5 +42,6 @@ namespace Persistence.HoldingsData
         /// <returns>True or False</returns>
         Task<bool> CheckIfHoldingExists(IDbConnection connection, ulong userId, ulong stockId);
         Task DeleteHolding(IDbConnection connection, ulong holdingId);
+        Task<IEnumerable<Holdings>> GetAllHoldingsForUserWithStockDetails(IDbConnection connection, ulong userId);
     }
 }

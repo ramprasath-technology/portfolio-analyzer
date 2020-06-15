@@ -17,6 +17,17 @@ namespace Persistence.HoldingsData
               FROM stock_holding s
              WHERE s.user_id = ?userId;";
 
+        private const string _selAllHoldingsForUserWithStockDetails =
+            @"   SELECT s.holding_id AS HoldingId,
+                   s.user_id AS UserId,
+                   s.stock_id AS StockId,
+                   s.holding_details AS HoldingDetails,
+                   s1.stock_ticker AS Ticker,
+                   s1.company_name AS CompanyName
+              FROM stock_holding s
+                   INNER JOIN stock_stock_data s1 ON s.stock_id = s1.stock_id
+              WHERE s.user_id = ?userId; ";
+
         private const string _selHoldingDetailsForParticularStock =
             @"SELECT s.holding_id, s.holding_details
               FROM stock_holding s
@@ -80,7 +91,42 @@ namespace Persistence.HoldingsData
 
         }
 
-       
+        public async Task<IEnumerable<Holdings>> GetAllHoldingsForUserWithStockDetails(IDbConnection connection, ulong userId)
+        {
+            var holdings = new List<Holdings>();
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("userId", userId);
+
+            var userHoldings = await connection.QueryAsync(_selAllHoldingsForUserWithStockDetails, dynamicParameters);
+
+            foreach (var userHolding in userHoldings)
+            {
+                var holdingDetails = userHolding.HoldingDetails;
+                var deserializedHoldingDetails = JsonSerializer.Deserialize<IEnumerable<HoldingDetails>>(holdingDetails);
+
+                var stock = new Stock()
+                {
+                    StockId = userHolding.StockId,
+                    CompanyName = userHolding.CompanyName,
+                    Ticker = userHolding.Ticker
+                };
+
+                var holding = new Holdings()
+                {
+                    HoldingDetails = deserializedHoldingDetails,
+                    HoldingId = userHolding.HoldingId,
+                    StockId = userHolding.StockId,
+                    UserId = userHolding.UserId,
+                    Stock = stock
+                };
+
+                holdings.Add(holding);
+            }
+           
+            return holdings;
+        }
+
+
         public async Task<Holdings> GetHoldingDataForUserAndStock(IDbConnection connection, ulong userId, ulong stockId)
         {
             var dynamicParameters = new DynamicParameters();

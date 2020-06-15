@@ -10,11 +10,11 @@ namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService
 {
     public class DailyStockPriceService : IDailyStockPriceService
     {
-        public async Task<DailyStockPrice> GetDailyStockPriceService(string baseUrl, string ticker, DateTime startDate, DateTime endDate)
+        public async Task<DailyStockPrice> GetDailyStockPriceService(string baseUrl, string ticker, string apiKey, DateTime startDate, DateTime endDate)
         {
             var formattedStartDate = $"{startDate.Year}-{startDate.Month}-{startDate.Day}";
             var formattedEndDate = $"{endDate.Year}-{endDate.Month}-{endDate.Day}";
-            var completeUrl = $"{baseUrl}{ticker}?from={formattedStartDate}&to={formattedEndDate}";
+            var completeUrl = $"{baseUrl}{ticker}?from={formattedStartDate}&to={formattedEndDate}&apikey={apiKey}";
 
             var client = new HttpClient();
             var stockDailyPriceJson = await client.GetStreamAsync(completeUrl);

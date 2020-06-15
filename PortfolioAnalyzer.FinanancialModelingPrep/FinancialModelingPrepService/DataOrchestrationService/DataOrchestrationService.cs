@@ -29,18 +29,24 @@ namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService
             return companyProfile;
         }
 
-        public async Task<DailyStockPrice> GetDailyStockPriceService(string baseUrl, string ticker, DateTime startDate, DateTime endDate)
+        public async Task<DailyStockPrice> GetDailyStockPriceService(string baseUrl, string ticker, string apiKey, DateTime startDate, DateTime endDate)
         {
-            var dailyStockPrice = await _dailyStockPriceService.GetDailyStockPriceService(baseUrl, ticker, startDate, endDate);
+            var dailyStockPrice = await _dailyStockPriceService.GetDailyStockPriceService(baseUrl, ticker, apiKey, startDate, endDate);
 
             return dailyStockPrice;
         }
 
         public async Task<IEnumerable<LastStockQuote>> GetLastStockQuotes(string baseUrl, string apiKey, IEnumerable<string> ticker)
         {
-            var lastStockQuote = await _lastStockQuoteService.GetLastQuoteForStocks(baseUrl, apiKey, ticker);
+            var lastKnownStockQuotes = await _lastStockQuoteService.GetLastQuoteForStocks(baseUrl, apiKey, ticker);
 
-            return lastStockQuote;
+            //Add properties to be rounded as and when required
+            foreach (var quote in lastKnownStockQuotes)
+            {
+                quote.Price = Math.Round(quote.Price, 2);
+            }
+
+            return lastKnownStockQuotes;
         }
 
 

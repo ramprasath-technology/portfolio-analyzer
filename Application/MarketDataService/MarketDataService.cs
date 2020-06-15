@@ -23,8 +23,9 @@ namespace Application.MarketDataService
         public async Task<DailyStockPrice> GetDailyStockPrice(string ticker, DateTime startDate, DateTime endDate)
         {
             var baseUrl = _configService.GetDailyPriceUrl();
+            var apiKey = _configService.GetFinancialModelingPrepKey();
 
-            var dailyStockPrice = await _dataOrchestrationService.GetDailyStockPriceService(baseUrl, ticker, startDate.Date, endDate.Date);
+            var dailyStockPrice = await _dataOrchestrationService.GetDailyStockPriceService(baseUrl, ticker, apiKey, startDate.Date, endDate.Date);
 
             return dailyStockPrice;
         }

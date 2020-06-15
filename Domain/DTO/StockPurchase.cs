@@ -19,6 +19,7 @@ namespace Domain.DTO
         [Required]
         [Range(0.1, Double.MaxValue)]
         public decimal Quantity { get; set; }
+
         public string Comment { get; set; }
         public ulong StockId { get; set; }
         public ulong PurchaseId { get; set; }

@@ -67,6 +67,7 @@ namespace Application.StockIndexComparisonService
                 stockIndexComparison.TotalPriceDifference = Decimal.Round((stockPriceToday - purchase.Price) * purchase.Quantity, 4);
                 stockIndexComparison.PriceDifferencePerQuantity = stockPriceToday - purchase.Price;
                 stockIndexComparison.TotalPurchasePrice = purchase.Price * purchase.Quantity;
+                stockIndexComparison.TotalCurrentPrice = stockPriceToday * purchase.Quantity;
                 stockIndexComparison.PercentageChange = Decimal.Round((stockIndexComparison.TotalPriceDifference / stockIndexComparison.TotalPurchasePrice) * 100, 4);
                 stockIndexComparison.IndexesDifference = new List<IndexDifference>();
 
@@ -74,15 +75,17 @@ namespace Application.StockIndexComparisonService
                 {
                     var indexPriceToday = tickerStockQuoteMap[indexTicker].Price;
                     var indexPriceOnPurchaseDate = dateIndexValueMap[purchase.Date.Date][indexTicker]; 
+                    var stockPriceToIndexPriceRatio = stockIndexComparison.PurchasePrice / indexPriceOnPurchaseDate; 
                     var indexDifference = new IndexDifference();
-                    var indexValue = dateIndexValueMap[purchase.Date.Date];
                     indexDifference.CurrentPrice = indexPriceToday;
                     indexDifference.IndexTicker = indexTicker;
-                    indexDifference.PriceDifferencePerQuantity = indexPriceToday - indexPriceOnPurchaseDate;
-                    indexDifference.TotalPriceDifference = Decimal.Round((indexPriceToday - indexPriceOnPurchaseDate) * purchase.Quantity, 4);
+                    indexDifference.PurchaseQuantity = stockPriceToIndexPriceRatio * purchase.Quantity;
+                    indexDifference.PriceDifferencePerQuantity = Decimal.Round((indexPriceToday - indexPriceOnPurchaseDate) * stockPriceToIndexPriceRatio, 4);               
+                    indexDifference.TotalPriceDifference = Decimal.Round((indexPriceToday - indexPriceOnPurchaseDate) * indexDifference.PurchaseQuantity, 4);
                     indexDifference.PriceOnPurchaseDate = indexPriceOnPurchaseDate;
-                    indexDifference.TotalPurchasePrice = indexDifference.PriceOnPurchaseDate * purchase.Quantity;
+                    indexDifference.TotalPurchasePrice = indexDifference.PriceOnPurchaseDate * indexDifference.PurchaseQuantity;
                     indexDifference.PercentageChange = Decimal.Round((indexDifference.TotalPriceDifference / indexDifference.TotalPurchasePrice) * 100, 4);
+                    indexDifference.TotalCurrentPrice = indexDifference.CurrentPrice * indexDifference.PurchaseQuantity;
                     stockIndexComparison.IndexesDifference.Add(indexDifference);
                 }
 

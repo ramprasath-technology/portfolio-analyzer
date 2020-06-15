@@ -13,6 +13,7 @@ namespace Domain.DTO.StockAnalysis
         public decimal Quantity { get; set; }
         public decimal PriceDifferencePerQuantity { get; set; }
         public decimal TotalPriceDifference { get; set; }
+        public decimal TotalCurrentPrice { get; set; }
         public decimal PercentageChange { get; set; }
         public decimal TotalPurchasePrice { get; set; }
         public IList<IndexDifference> IndexesDifference { get; set; }
@@ -22,11 +23,12 @@ namespace Domain.DTO.StockAnalysis
     {
         public string IndexTicker { get; set; }
         public decimal PriceOnPurchaseDate { get; set; }
+        public decimal PurchaseQuantity { get; set; }
         public decimal CurrentPrice { get; set; }
         public decimal PriceDifferencePerQuantity { get; set; }
         public decimal TotalPriceDifference { get; set; }
         public decimal PercentageChange { get; set; }
         public decimal TotalPurchasePrice { get; set; }
-
+        public decimal TotalCurrentPrice { get; set; }
     }
 }

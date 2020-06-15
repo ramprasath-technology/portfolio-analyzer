@@ -17,5 +17,7 @@ namespace Application.StockHoldingService
         /// <returns></returns>
         Task AddPurchaseToHoldings(ulong userId, Purchase purchase);
         Task UpdateHoldingAfterSale(ulong userId, Sale sale);
+        Task<IEnumerable<Holdings>> GetAllHoldingsForUserWithStockDetails(ulong userId);
+        IEnumerable<ulong> GetPurchaseIdsFromHolding(IEnumerable<Holdings> holdings);
     }
 }
