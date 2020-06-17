@@ -23,7 +23,7 @@ namespace Persistence.StockIndexValueData
         /// <param name="stockIndexValue">Collection of Stock Index Values</param>
         /// <returns></returns>
         Task AddIndexValue(IDbConnection connection, IEnumerable<StockIndexValue> stockIndexValue);
-        Task<bool> CheckIfTickerValueExistsForGivenDate(IDbConnection connection, int tickerId, DateTime startDate, DateTime endDate);
+        Task<int> GetNumberOfDaysTickerValueIsPresent(IDbConnection connection, int tickerId, DateTime startDate, DateTime endDate);
         Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexAndDate(IDbConnection connection,
             IEnumerable<string> ticker,
             IEnumerable<DateTime> date);

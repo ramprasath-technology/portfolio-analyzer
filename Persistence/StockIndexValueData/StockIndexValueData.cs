@@ -35,12 +35,10 @@ namespace Persistence.StockIndexValueData
                      @DayHighValue,
                      @DayLowValue);";
 
-        private readonly string chkTickerValueExistsForGivenDate =
-            @"SELECT EXISTS
-                  (SELECT 1
+        private readonly string selNumberOfDaysTickerValueIsPresent =
+            @"SELECT COUNT(*)
                      FROM stock_index_value s
-                    WHERE s.ticker_id = ?tickerId AND s.`date` BETWEEN ?startDate AND ?endDate
-                    LIMIT 1);";
+                    WHERE s.ticker_id = ?tickerId AND s.`date` BETWEEN ?startDate AND ?endDate;";
 
         private readonly string selPricesForGivenIndexAndDate =
             @"SELECT s.`date` AS Date,
@@ -77,7 +75,7 @@ namespace Persistence.StockIndexValueData
             connection.Close();
         }
 
-        public async Task<bool> CheckIfTickerValueExistsForGivenDate(IDbConnection connection, int tickerId, DateTime startDate, DateTime endDate)
+        public async Task<int> GetNumberOfDaysTickerValueIsPresent(IDbConnection connection, int tickerId, DateTime startDate, DateTime endDate)
         {
             var parameters = new DynamicParameters();
             parameters.Add("tickerId", tickerId);
@@ -85,10 +83,10 @@ namespace Persistence.StockIndexValueData
             parameters.Add("endDate", endDate);
 
             connection.Open();
-            var valueExists = await connection.ExecuteScalarAsync<bool>(chkTickerValueExistsForGivenDate, parameters);
+            var numberOfDays = await connection.ExecuteScalarAsync<int>(selNumberOfDaysTickerValueIsPresent, parameters);
             connection.Close();
 
-            return valueExists;
+            return numberOfDays;
         }
 
         public async Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexAndDate(IDbConnection connection,

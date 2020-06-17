@@ -39,8 +39,12 @@ namespace Application.StockIndexValueService
                 var ticker = await _stockIndexTickerService.GetStockIndex(stockIndexValueInputs.Ticker);
                 var tickerId = ticker.TickerId;
                 var connection = _connectionService.GetConnectionToCommonShard();
+                var startTime = stockIndexValueInputs.StartDate;
+                var endTime = stockIndexValueInputs.EndDate;
 
-                if(!await _stockIndexValueData.CheckIfTickerValueExistsForGivenDate(connection, tickerId, stockIndexValueInputs.StartDate, stockIndexValueInputs.EndDate))
+                var totalNumberOfDays = CalculateNumberOfWeekDays(startTime, endTime);
+                var numberOfDaysTickerIsPresent =  await _stockIndexValueData.GetNumberOfDaysTickerValueIsPresent(connection, tickerId, startTime, endTime);
+                if (numberOfDaysTickerIsPresent != totalNumberOfDays)
                 {
                     var stockPrice = await _marketDataService.GetDailyStockPrice(stockIndexValueInputs.Ticker,
                             stockIndexValueInputs.StartDate,
@@ -51,6 +55,24 @@ namespace Application.StockIndexValueService
 
                 _connectionService.DisposeConnection(connection);
             }
+        }
+
+        private double CalculateNumberOfWeekDays(DateTime startTime, DateTime endTime)
+        {
+            //TODO Need to include logic for stock market holidays too
+            var numOfDays = 0;
+
+            while (startTime.Date <= endTime.Date)
+            {
+                if(startTime.DayOfWeek != DayOfWeek.Saturday && startTime.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    numOfDays++;
+                }
+
+                startTime = startTime.AddDays(1);
+            }
+
+            return numOfDays;
         }
 
         private IEnumerable<StockIndexValue> MapMarketDataToIndexValueModel(DailyStockPrice dailyStockPrice, int tickerId)
