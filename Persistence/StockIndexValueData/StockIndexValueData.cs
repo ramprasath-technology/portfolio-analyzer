@@ -40,7 +40,7 @@ namespace Persistence.StockIndexValueData
                      FROM stock_index_value s
                     WHERE s.ticker_id = ?tickerId AND s.`date` BETWEEN ?startDate AND ?endDate;";
 
-        private readonly string selPricesForGivenIndexAndDate =
+        private readonly string selPricesForGivenIndexTickersAndDates =
             @"SELECT s.`date` AS Date,
                    s.value AS Value,
                    s.value_id AS ValueId,
@@ -89,7 +89,7 @@ namespace Persistence.StockIndexValueData
             return numberOfDays;
         }
 
-        public async Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexAndDate(IDbConnection connection,
+        public async Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexTickersAndDates(IDbConnection connection,
             IEnumerable<string> ticker,
             IEnumerable<DateTime> date)
         {
@@ -98,7 +98,7 @@ namespace Persistence.StockIndexValueData
             parameters.Add("date", date);
 
             var values = await connection.QueryAsync<StockIndexValue, StockIndexTicker, StockIndexValue>(
-                selPricesForGivenIndexAndDate,
+                selPricesForGivenIndexTickersAndDates,
                 map: (indexValue, indexTicker) =>
                 {
                     indexValue.StockIndexTicker = indexTicker;

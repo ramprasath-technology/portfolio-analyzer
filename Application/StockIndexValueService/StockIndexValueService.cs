@@ -107,17 +107,41 @@ namespace Application.StockIndexValueService
             return true;
         }
 
-        public async Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexAndDate(ulong userId, 
+        public async Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexTickersAndDates(ulong userId, 
             IEnumerable<string> tickers, 
             IEnumerable<DateTime> dates)
         {
             using(var connection = _connectionService.GetOpenConnection(userId))
             {
                 var datesWithoutTime = dates.Select(x => x.Date);
-                var indexValues = await _stockIndexValueData.GetPricesForGivenIndexAndDate(connection, tickers, datesWithoutTime);
+                var indexValues = await _stockIndexValueData.GetPricesForGivenIndexTickersAndDates(connection, tickers, datesWithoutTime);
                 return indexValues;
             }
             
+        }
+
+        public Dictionary<DateTime, Dictionary<string, decimal>> OrderIndexValuesByDateAndTicker(IEnumerable<StockIndexValue> stockIndexValues)
+        {
+            var dateTickerPriceMap = new Dictionary<DateTime, Dictionary<string, decimal>>();
+
+            foreach (var value in stockIndexValues)
+            {
+                if (dateTickerPriceMap.ContainsKey(value.Date.Date))
+                {
+                    var valuesForThisDate = dateTickerPriceMap[value.Date.Date];
+                    if(!valuesForThisDate.ContainsKey(value.StockIndexTicker.Ticker))
+                    {
+                        valuesForThisDate[value.StockIndexTicker.Ticker] = value.Value;
+                    }
+                }
+                else
+                {
+                    dateTickerPriceMap[value.Date.Date] = new Dictionary<string, decimal>();
+                    dateTickerPriceMap[value.Date.Date][value.StockIndexTicker.Ticker] = value.Value;
+                }
+            }
+
+            return dateTickerPriceMap;
         }
     }
 }

@@ -12,6 +12,11 @@ namespace Persistence.StockPurchaseData
         Task<Purchase> AddPurchase(Purchase purchase, IDbConnection connection);
         Task<IEnumerable<Purchase>> GetPurchasesById(IDbConnection connection,
             IEnumerable<ulong> purchaseId);
+        Task<IEnumerable<Purchase>> GetAllPurchasesForUser(IDbConnection connection, ulong userId);
+        Task<IEnumerable<Purchase>> GetPurchasesByIdFilteredByDates(IDbConnection connection,
+            IEnumerable<ulong> purchaseId,
+            DateTime from,
+            DateTime to);
 
     }
 }

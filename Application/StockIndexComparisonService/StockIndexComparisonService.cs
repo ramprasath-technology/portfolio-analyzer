@@ -34,7 +34,10 @@ namespace Application.StockIndexComparisonService
             _marketDataService = marketDataService;
         }
 
-        public async Task<IEnumerable<StockComparisonToIndex>> GetComparisonWithIndex(ulong userId, IEnumerable<string> indexTickers)
+        public async Task<IEnumerable<StockComparisonToIndex>> GetComparisonWithIndex(ulong userId, 
+            IEnumerable<string> indexTickers,
+            DateTime from = default(DateTime),
+            DateTime to = default(DateTime))
         {
             var stockIndexComparisons = new List<StockComparisonToIndex>();
             var holdings = await _stockHoldingService.GetAllHoldingsForUser(userId);
@@ -42,14 +45,14 @@ namespace Application.StockIndexComparisonService
             var stockTask = _stockService.GetStocksById(userId, stockIds);
             var purchaseIds = GetPurchaseIdsFromHolding(holdings);
             var stocks = await stockTask;
-            var purchaseTask = _stockPurchaseService.GetPurchasesById(userId, purchaseIds);
-            var tickers = GetTickerFromStockInformation(stocks).ToList();
+            var purchaseTask = GetPurchases(userId, purchaseIds, from, to);
+            var tickers = GetTickerFromStockInformation(stocks).ToList();           
             tickers.AddRange(indexTickers);
             var stockQuoteTask = _marketDataService.GetLastStockQuote(tickers);
-            var purchases = await purchaseTask;
             var stockIdTickerMap = MapStockIdToTicker(stocks);
+            var purchases = await purchaseTask;
             var purchaseDates = GetPurchaseDates(purchases);
-            var indexValues = await _stockIndexValueService.GetPricesForGivenIndexAndDate(userId, indexTickers, purchaseDates);
+            var indexValues = await _stockIndexValueService.GetPricesForGivenIndexTickersAndDates(userId, indexTickers, purchaseDates);
             var dateIndexValueMap = MapIndexValuesToDate(indexValues);
             var stockQuotes = await stockQuoteTask;
             var tickerStockQuoteMap = stockQuotes.ToDictionary(x => x.Symbol);
@@ -93,6 +96,39 @@ namespace Application.StockIndexComparisonService
             }
 
             return stockIndexComparisons;
+        }
+
+        private Task<IEnumerable<Purchase>> GetPurchases(ulong userId, 
+            IEnumerable<ulong> purchaseIds, 
+            DateTime from, 
+            DateTime to)
+        {
+            if (from != DateTime.MinValue && to != DateTime.MinValue && from <= to)
+                return _stockPurchaseService.GetPurchasesByIdFilteredByDates(userId, purchaseIds, from, to);
+
+            else
+                return _stockPurchaseService.GetPurchasesById(userId, purchaseIds);
+        }
+
+        private IEnumerable<string> GetTickersToCompare(IEnumerable<Purchase> purchases, IEnumerable<string> allTickers)
+        {
+            var tickersFromPurchase = new HashSet<string>();
+            var tickers = new HashSet<string>();
+
+            foreach (var purchase in purchases)
+            {
+                tickersFromPurchase.Add(purchase.Stock.Ticker);
+            }
+
+            foreach (var ticker in allTickers)
+            {
+                if (tickersFromPurchase.Contains(ticker))
+                {
+                    tickers.Add(ticker);
+                }
+            }
+
+            return tickers;
         }
 
         private IEnumerable<ulong> GetStockIdsFromHolding(IEnumerable<Holdings> holding)

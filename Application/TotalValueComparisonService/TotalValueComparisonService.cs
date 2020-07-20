@@ -16,9 +16,12 @@ namespace Application.TotalValueComparisonService
             _stockIndexComparisonService = stockIndexComparisonService;
         }
 
-        public async Task<TotalValueComparisonToIndex> GetTotalValueComparison(ulong userId, IEnumerable<string> indexTickers)
+        public async Task<TotalValueComparisonToIndex> GetTotalValueComparison(ulong userId, 
+            IEnumerable<string> indexTickers, 
+            DateTime from, 
+            DateTime to)
         {
-            var valueComparisons = await _stockIndexComparisonService.GetComparisonWithIndex(userId, indexTickers);
+            var valueComparisons = await _stockIndexComparisonService.GetComparisonWithIndex(userId, indexTickers, from, to);
             var totalValueComparison = new TotalValueComparisonToIndex();
             totalValueComparison.IndexGainOrLossMap = new Dictionary<string, decimal>();
             totalValueComparison.IndexTotalCurrentPriceMap = new Dictionary<string, decimal>();

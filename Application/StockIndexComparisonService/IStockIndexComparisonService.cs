@@ -8,6 +8,9 @@ namespace Application.StockIndexComparisonService
 {
     public interface IStockIndexComparisonService
     {
-        Task<IEnumerable<StockComparisonToIndex>> GetComparisonWithIndex(ulong userId, IEnumerable<string> indexTickers);
+        Task<IEnumerable<StockComparisonToIndex>> GetComparisonWithIndex(ulong userId, 
+            IEnumerable<string> indexTickers,
+            DateTime from = default(DateTime),
+            DateTime to = default(DateTime));
     }
 }

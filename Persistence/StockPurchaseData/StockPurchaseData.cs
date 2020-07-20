@@ -36,6 +36,29 @@ namespace Persistence.StockPurchaseData
                    s.user_id AS UserId
               FROM stock_stock_purchase s
              WHERE s.purchase_id IN ?purchaseId;";
+
+        private const string selPurchasesByIdFilteredByDate =
+            @"SELECT s.comment AS Comment,
+                   s.`date` AS Date,
+                   s.price AS Price,
+                   s.purchase_id AS PurchaseId,
+                   s.stock_id AS StockId,
+                   s.quantity AS Quantity,
+                   s.user_id AS UserId
+              FROM stock_stock_purchase s
+             WHERE s.purchase_id IN ?purchaseId
+             AND date >= ?from AND date <= ?to";
+
+        private const string selPurchasesForUser =
+            @"SELECT s.comment AS Comment,
+                   s.`date` AS Date,
+                   s.price AS Price,
+                   s.purchase_id AS PurchaseId,
+                   s.stock_id AS StockId,
+                   s.quantity AS Quantity,
+                   s.user_id AS UserId
+              FROM stock_stock_purchase s
+             WHERE s.user_id = ?userId;";
                     #endregion
 
         public async Task<Purchase> AddPurchase(Purchase purchase, IDbConnection connection)
@@ -67,6 +90,31 @@ namespace Persistence.StockPurchaseData
             connection.Open();
             var purchases = await connection.QueryAsync<Purchase>(selPurchasesById, parameters);
             connection.Close();
+
+            return purchases;
+        }
+
+        public async Task<IEnumerable<Purchase>> GetPurchasesByIdFilteredByDates(IDbConnection connection,
+            IEnumerable<ulong> purchaseId,
+            DateTime from, 
+            DateTime to)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("purchaseId", purchaseId);
+            parameters.Add("from", from);
+            parameters.Add("to", to);
+
+            var purchases = await connection.QueryAsync<Purchase>(selPurchasesByIdFilteredByDate, parameters);
+
+            return purchases;
+        }
+
+        public async Task<IEnumerable<Purchase>> GetAllPurchasesForUser(IDbConnection connection, ulong userId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", userId);
+
+            var purchases = await connection.QueryAsync<Purchase>(selPurchasesForUser, parameters);
 
             return purchases;
         }

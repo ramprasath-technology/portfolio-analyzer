@@ -10,6 +10,7 @@ namespace Application.StockIndexValueService
     public interface IStockIndexValueService
     {
         Task AddIndexValues(StockIndexValueInputs stockIndexValueInputs);
-        Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexAndDate(ulong userId, IEnumerable<string> ticker, IEnumerable<DateTime> date);
+        Task<IEnumerable<StockIndexValue>> GetPricesForGivenIndexTickersAndDates(ulong userId, IEnumerable<string> ticker, IEnumerable<DateTime> date);
+        Dictionary<DateTime, Dictionary<string, decimal>> OrderIndexValuesByDateAndTicker(IEnumerable<StockIndexValue> stockIndexValues);
     }
 }

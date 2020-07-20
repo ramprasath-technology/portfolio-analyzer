@@ -39,5 +39,27 @@ namespace Application.StockPurchaseService
 
             return purchases;
         }
+
+        public async Task<IEnumerable<Purchase>> GetPurchasesByIdFilteredByDates(ulong userId, 
+            IEnumerable<ulong> purchaseId,
+            DateTime from,
+            DateTime to)
+        {
+            using (var connection = _connectionService.GetOpenConnection(userId))
+            {
+                var purchases = await _stockPurchaseData.GetPurchasesByIdFilteredByDates(connection, purchaseId, from, to);
+
+                return purchases;
+            }
+        }
+
+        public async Task<IEnumerable<Purchase>> GetPurchasesForUser(ulong userId)
+        {
+            using (var conn = _connectionService.GetOpenConnection(userId))
+            {
+                var purchases = await _stockPurchaseData.GetAllPurchasesForUser(conn, userId);
+                return purchases;
+            }
+        }
     }
 }

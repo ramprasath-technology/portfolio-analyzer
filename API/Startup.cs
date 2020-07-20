@@ -39,6 +39,7 @@ using Application.StockIndexComparisonService;
 using Application.StockTotalValueService;
 using Application.TotalValueComparisonService;
 using Application.PortfolioCompositionService;
+using Application.IndexAnalysisService;
 
 namespace API
 {
@@ -80,6 +81,7 @@ namespace API
             services.AddSingleton<IDataOrchestrationService, DataOrchestrationService>();
             services.AddSingleton<IDailyStockPriceService, DailyStockPriceService>();
             services.AddSingleton<ILastStockQuoteService, LastStockQuoteService>();
+            services.AddSingleton<IIndexAnalysisService, IndexAnalysisService>();
             services.AddSingleton<IUserService, UserService>();
 
             services.AddSingleton<IStockPurchaseData, StockPurchaseData>();

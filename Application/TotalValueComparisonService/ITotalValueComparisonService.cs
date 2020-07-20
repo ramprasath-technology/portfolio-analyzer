@@ -8,6 +8,9 @@ namespace Application.TotalValueComparisonService
 {
     public interface ITotalValueComparisonService
     {
-        Task<TotalValueComparisonToIndex> GetTotalValueComparison(ulong userId, IEnumerable<string> indexTickers);
+        Task<TotalValueComparisonToIndex> GetTotalValueComparison(ulong userId, 
+            IEnumerable<string> indexTickers, 
+            DateTime from, 
+            DateTime to);
     }
 }

@@ -48,7 +48,7 @@ namespace API.Controllers
         {
             var index = new List<string>() { "voo" };
             var date = new List<DateTime>() { DateTime.Now.AddDays(-30).Date };
-            await _stockIndexValueService.GetPricesForGivenIndexAndDate(userId, index, date);
+            await _stockIndexValueService.GetPricesForGivenIndexTickersAndDates(userId, index, date);
 
             return Ok();
         }    

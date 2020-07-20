@@ -20,13 +20,13 @@ namespace API.Controllers
             _totalValueComparisonService = totalValueComparisonService;
         }
 
-        [HttpGet("GetTotalValueComparison/{userId}")]
-        public async Task<TotalValueComparisonToIndex> GetTotalValueComparison(ulong userId)
+        [HttpGet("GetTotalValueComparison/{userId}/{from}/{to}")]
+        public async Task<TotalValueComparisonToIndex> GetTotalValueComparison(ulong userId, DateTime from, DateTime to)
         {
             try
             {
                 var indexTickers = new List<string>() { "VOO", "ONEQ", "QQQ" };
-                var totalGainOrLoss = await _totalValueComparisonService.GetTotalValueComparison(userId, indexTickers);
+                var totalGainOrLoss = await _totalValueComparisonService.GetTotalValueComparison(userId, indexTickers, from, to);
 
                 return totalGainOrLoss;
             }
