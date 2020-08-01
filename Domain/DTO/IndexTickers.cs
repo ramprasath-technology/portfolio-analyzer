@@ -4,13 +4,23 @@ using System.Text;
 
 namespace Domain.DTO
 {
-    public class IndexTickers
+    public static class IndexTickers
     {
-        public IReadOnlyList<string> allowedIndexTickers = new List<string>()
+        private static IReadOnlyList<string> allowedIndexTickers = new List<string>()
         {
             "VOO",
             "ONEQ",
-            "QQQ"
+            "QQQ",
+            "ARKK",
+            "ARKQ",
+            "ARKW",
+            "ARKG",
+            "ARKF"
         };
+
+        public static IReadOnlyList<string> GetAllowedIndexTickers()
+        {
+            return allowedIndexTickers;
+        }
     }
 }

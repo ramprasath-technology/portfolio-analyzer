@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.IndexAnalysisService;
+using Domain.DTO;
 using Domain.DTO.StockAnalysis;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,12 +27,7 @@ namespace API.Controllers
         {
             try
             {
-                var tickers = new List<string>()
-                {
-                "VOO",
-                "ONEQ",
-                "QQQ"
-                };
+                var tickers = IndexTickers.GetAllowedIndexTickers();
 
                 var indexAnalysis = await _indexAnalysisService.GetReturnsForDailyInvestment(userId, tickers);
                 return indexAnalysis;
@@ -48,12 +44,7 @@ namespace API.Controllers
         {
             try
             {
-                var tickers = new List<string>()
-                {
-                "VOO",
-                "ONEQ",
-                "QQQ"
-                };
+                var tickers = IndexTickers.GetAllowedIndexTickers();
 
                 var indexAnalysis = await _indexAnalysisService.GetReturnsForBimonthlyInvestment(userId, tickers);
                 return indexAnalysis;

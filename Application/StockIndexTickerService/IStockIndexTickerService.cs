@@ -15,5 +15,6 @@ namespace Application.StockIndexTickerService
         /// <returns>True or False</returns>
         Task<bool> CheckIfStockTickerExists(string ticker);
         Task<StockIndexTicker> GetStockIndex(string ticker);
+        Task<int> AddStockIndex(StockIndexTicker stockTickerIndex);
     }
 }

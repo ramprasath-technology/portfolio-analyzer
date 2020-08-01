@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.StockIndexComparisonService;
+using Domain.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ namespace API.Controllers
         {
             try
             {
-                var tickers = new List<string>() { "ONEQ", "VOO", "QQQ" };
+                var tickers = IndexTickers.GetAllowedIndexTickers();
                 var stockIndexComparison = await _stockIndexComparisonService.GetComparisonWithIndex(userId, tickers);
                 return Ok(stockIndexComparison);
             }

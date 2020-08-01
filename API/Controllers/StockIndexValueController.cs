@@ -46,7 +46,7 @@ namespace API.Controllers
         [HttpGet("GetIndexValues/{userId}")]
         public async Task<IActionResult> GetIndexValues(ulong userId)
         {
-            var index = new List<string>() { "voo" };
+            var index = IndexTickers.GetAllowedIndexTickers();
             var date = new List<DateTime>() { DateTime.Now.AddDays(-30).Date };
             await _stockIndexValueService.GetPricesForGivenIndexTickersAndDates(userId, index, date);
 

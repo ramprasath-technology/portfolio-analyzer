@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.TotalValueComparisonService;
+using Domain.DTO;
 using Domain.DTO.StockAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace API.Controllers
         {
             try
             {
-                var indexTickers = new List<string>() { "VOO", "ONEQ", "QQQ" };
+                var indexTickers = IndexTickers.GetAllowedIndexTickers();
                 var totalGainOrLoss = await _totalValueComparisonService.GetTotalValueComparison(userId, indexTickers, from, to);
 
                 return totalGainOrLoss;
