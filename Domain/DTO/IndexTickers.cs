@@ -11,11 +11,11 @@ namespace Domain.DTO
             "VOO",
             "ONEQ",
             "QQQ",
-            "ARKK",
-            "ARKQ",
-            "ARKW",
-            "ARKG",
-            "ARKF"
+            //"ARKK",
+            //"ARKQ",
+            //"ARKW",
+            //"ARKG",
+            //"ARKF"
         };
 
         public static IReadOnlyList<string> GetAllowedIndexTickers()

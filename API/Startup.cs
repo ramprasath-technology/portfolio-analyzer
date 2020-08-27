@@ -40,11 +40,16 @@ using Application.StockTotalValueService;
 using Application.TotalValueComparisonService;
 using Application.PortfolioCompositionService;
 using Application.IndexAnalysisService;
+using Application.WebScraperService;
+using Application.WebScraperService.CNNScraper;
+using Application.CompositionAndRecommendationService;
+using Application.StockRecommendationService;
 
 namespace API
 {
     public class Startup
     {
+        readonly string MyAllowSpecificOrigins = "_allowedOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -55,6 +60,14 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://192.168.101.1:3000/");
+                                  });
+            });
             services.AddControllers();
 
             services.AddSingleton<IConnectionService, ConnectionService>();
@@ -83,6 +96,10 @@ namespace API
             services.AddSingleton<ILastStockQuoteService, LastStockQuoteService>();
             services.AddSingleton<IIndexAnalysisService, IndexAnalysisService>();
             services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IWebScraperService, CNNScraperService>();
+            services.AddSingleton<ICompositionAndRecommendationService, CompositionAndRecommendationService>();
+            services.AddSingleton<IStockRecommendationService, StockRecommendationService>();
+
 
             services.AddSingleton<IStockPurchaseData, StockPurchaseData>();
             services.AddSingleton<IStockSaleData, StockSaleData>();
@@ -105,7 +122,9 @@ namespace API
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints =>
             {

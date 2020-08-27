@@ -33,5 +33,10 @@ namespace Application.ConfigService
         {
             return _configuration.GetSection("APIKeys").GetSection("FinancialModelingPrep").Value;
         }
+
+        public string GetCNNStockInfoUrl()
+        {
+            return _configuration.GetSection("URLs").GetSection("CNNStockInformation").Value;
+        }
     }
 }

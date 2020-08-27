@@ -10,5 +10,6 @@ namespace Application.ConfigService
         string GetDailyPriceUrl();
         string GetStockQuoteUrl();
         string GetFinancialModelingPrepKey();
+        string GetCNNStockInfoUrl();
     }
 }
