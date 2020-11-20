@@ -15,5 +15,7 @@ namespace Application.StockPurchaseService
             IEnumerable<ulong> purchaseId,
             DateTime from,
             DateTime to);
+        Task<IEnumerable<Purchase>> GetAllPurchasesForTicker(ulong userId, string ticker);
+        Task UpdatePurchasePriceAndQuantityByPurchaseId(ulong userId, IEnumerable<Purchase> purchases);
     }
 }

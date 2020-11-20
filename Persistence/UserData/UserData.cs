@@ -31,6 +31,7 @@ namespace Persistence.UserData
             var dynamicParams = new DynamicParameters();
             dynamicParams.Add("userName", user.UserName);
 
+            
             var userId = await connection.QueryFirstAsync<ulong>(insUser, dynamicParams);
 
             return userId;

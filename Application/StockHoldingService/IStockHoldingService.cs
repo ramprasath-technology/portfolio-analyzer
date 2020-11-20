@@ -19,5 +19,6 @@ namespace Application.StockHoldingService
         Task UpdateHoldingAfterSale(ulong userId, Sale sale);
         Task<IEnumerable<Holdings>> GetAllHoldingsForUserWithStockDetails(ulong userId);
         IEnumerable<ulong> GetPurchaseIdsFromHolding(IEnumerable<Holdings> holdings);
+        Task UpdateHoldingDetails(ulong userId, Holdings holding);
     }
 }

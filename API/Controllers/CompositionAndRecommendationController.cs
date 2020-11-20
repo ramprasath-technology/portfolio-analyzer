@@ -18,8 +18,11 @@ namespace API.Controllers
             _compositionAndRecommendationService = compositionAndRecommendationService;
         }
 
-        [HttpGet("GetCompositionAndRecommendation/{userId}")]
-        public async Task<IActionResult> GetCompositionAndRecommendation(ulong userId)
+        [HttpGet("GetCompositionAndRecommendation/{userId}/{percentageFromMedian?}/{percentageFromFiftyTwoWeekHigh?}/{portfolioComposition?}")]
+        public async Task<IActionResult> GetCompositionAndRecommendation(ulong userId, 
+            decimal percentageFromMedian, 
+            decimal percentageFromFiftyTwoWeekHigh, 
+            decimal portfolioComposition)
         {
             var compositionAndRecommendation = await _compositionAndRecommendationService.GetCompositionAndRecommendation(userId);
             return Ok(compositionAndRecommendation);

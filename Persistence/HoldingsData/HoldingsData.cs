@@ -18,7 +18,7 @@ namespace Persistence.HoldingsData
              WHERE s.user_id = ?userId;";
 
         private const string _selAllHoldingsForUserWithStockDetails =
-            @"   SELECT s.holding_id AS HoldingId,
+            @"SELECT s.holding_id AS HoldingId,
                    s.user_id AS UserId,
                    s.stock_id AS StockId,
                    s.holding_details AS HoldingDetails,
@@ -161,9 +161,7 @@ namespace Persistence.HoldingsData
             parameters.Add("holdingDetails", serializedHoldingDetails);
             parameters.Add("holdingId", holdingId);          
 
-            connection.Open();
             await connection.ExecuteAsync(_updHoldingDetails, parameters);
-            connection.Close();
         }
 
         public async Task<ulong> AddHolding(IDbConnection connection, Holdings holdings)

@@ -39,13 +39,11 @@ namespace Application.StockService
 
         public async Task<Stock> GetStockByTicker(ulong userId, string ticker)
         {
-            var connection = _connectionService.GetConnection(userId);
-
-            var stock = await _stockData.GetStockByTicker(connection, ticker);
-
-            _connectionService.DisposeConnection(connection);
-
-            return stock;
+            using (var connection = _connectionService.GetOpenConnection(userId))
+            {
+                var stock = await _stockData.GetStockByTicker(connection, ticker);
+                return stock;
+            }
         }
 
         public async Task<ulong> GetStockIdByTicker(ulong userId, string ticker)

@@ -51,6 +51,8 @@ namespace Application.StockReturnsService
 
             ComputeAnnualizedReturn(stockReturnModel);
 
+            stockReturnModel = stockReturnModel.OrderByDescending(x => x.AnnualizedReturn);
+
             return stockReturnModel;
         }
 
@@ -111,7 +113,7 @@ namespace Application.StockReturnsService
                 var daysRatio = Math.Round(numberOfDaysInYear / numberOfDaysStockHeld, 2);
                 var cumulativeReturn = Math.Round(((stockReturn.CurrentPrice - stockReturn.PurchasePrice) / stockReturn.PurchasePrice), 2);
                 stockReturn.AnnualizedReturn = Math.Round(Math.Pow(1 + Decimal.ToDouble(cumulativeReturn), daysRatio) - 1, 4);
-            }                      
+            }
         }
 
     }

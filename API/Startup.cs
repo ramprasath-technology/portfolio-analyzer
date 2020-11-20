@@ -44,6 +44,8 @@ using Application.WebScraperService;
 using Application.WebScraperService.CNNScraper;
 using Application.CompositionAndRecommendationService;
 using Application.StockRecommendationService;
+using Application.StockSplitService;
+using Application.IndividualStockComparisonService;
 
 namespace API
 {
@@ -99,7 +101,8 @@ namespace API
             services.AddSingleton<IWebScraperService, CNNScraperService>();
             services.AddSingleton<ICompositionAndRecommendationService, CompositionAndRecommendationService>();
             services.AddSingleton<IStockRecommendationService, StockRecommendationService>();
-
+            services.AddSingleton<IStockSplitService, StockSplitService>();
+            services.AddSingleton<IIndividualStockComparisonService, IndividualStockComparisonService>();
 
             services.AddSingleton<IStockPurchaseData, StockPurchaseData>();
             services.AddSingleton<IStockSaleData, StockSaleData>();

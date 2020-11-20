@@ -10,7 +10,7 @@ namespace Domain
         public ulong UserId { get; set; }
         public ulong StockId { get; set; }
         public ulong PurchaseId { get; set; }
-        public uint Quantity { get; set; }
+        public decimal Quantity { get; set; }
         public decimal Price { get; set; }
         public DateTime Date { get; set; }
         public string Comment { get; set; }

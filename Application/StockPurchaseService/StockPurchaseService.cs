@@ -61,5 +61,22 @@ namespace Application.StockPurchaseService
                 return purchases;
             }
         }
+
+        public async Task<IEnumerable<Purchase>> GetAllPurchasesForTicker(ulong userId, string ticker)
+        {
+            using (var conn = _connectionService.GetOpenConnection(userId))
+            {
+                var purchases = await _stockPurchaseData.GetAllPurchasesByTicker(conn, userId, ticker);
+                return purchases;
+            }
+        }
+
+        public async Task UpdatePurchasePriceAndQuantityByPurchaseId(ulong userId, IEnumerable<Purchase> purchases)
+        {
+            using (var conn = _connectionService.GetOpenConnection(userId))
+            {
+                await _stockPurchaseData.UpdatePurchasePriceAndQuantityByPurchaseId(conn, purchases);
+            }
+        }
     }
 }

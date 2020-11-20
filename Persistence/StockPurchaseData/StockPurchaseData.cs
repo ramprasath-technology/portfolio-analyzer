@@ -37,6 +37,18 @@ namespace Persistence.StockPurchaseData
               FROM stock_stock_purchase s
              WHERE s.purchase_id IN ?purchaseId;";
 
+        private const string selPurchasesByTicker =
+            @"SELECT s.comment AS Comment,
+                   s.`date` AS Date,
+                   s.price AS Price,
+                   s.purchase_id AS PurchaseId,
+                   s.stock_id AS StockId,
+                   s.quantity AS Quantity,
+                   s.user_id AS UserId
+              FROM stock_stock_purchase s
+                   INNER JOIN stock_stock_data s1 ON s.stock_id = s1.stock_id
+             WHERE s1.stock_ticker = ?ticker AND s.user_id = ?userId;";
+
         private const string selPurchasesByIdFilteredByDate =
             @"SELECT s.comment AS Comment,
                    s.`date` AS Date,
@@ -59,7 +71,12 @@ namespace Persistence.StockPurchaseData
                    s.user_id AS UserId
               FROM stock_stock_purchase s
              WHERE s.user_id = ?userId;";
-                    #endregion
+
+        private const string updPurchasePriceAndQuantityByPurchaseId =
+            @"UPDATE stock_stock_purchase
+               SET price = ?price, quantity = ?quantity
+             WHERE purchase_id = ?purchaseId;";
+        #endregion
 
         public async Task<Purchase> AddPurchase(Purchase purchase, IDbConnection connection)
         {
@@ -119,6 +136,41 @@ namespace Persistence.StockPurchaseData
             return purchases;
         }
 
+        public async Task<IEnumerable<Purchase>> GetAllPurchasesByTicker(IDbConnection connection, ulong userId, string ticker)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("ticker", ticker);
+            parameters.Add("userId", userId);
 
+            var purchases = await connection.QueryAsync<Purchase>(selPurchasesByTicker, parameters);
+            return purchases;
+        }
+
+        public async Task UpdatePurchasePriceAndQuantityByPurchaseId(IDbConnection connection, 
+            IEnumerable<Purchase> purchases)
+        {
+            using (var tran = connection.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var purchase in purchases)
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("price", purchase.Price);
+                        parameters.Add("quantity", purchase.Quantity);
+                        parameters.Add("purchaseId", purchase.PurchaseId);
+
+                        await connection.ExecuteAsync(updPurchasePriceAndQuantityByPurchaseId, parameters);
+                    }
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                }
+                
+            }           
+           
+        }
     }
 }

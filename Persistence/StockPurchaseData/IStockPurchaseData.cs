@@ -17,6 +17,9 @@ namespace Persistence.StockPurchaseData
             IEnumerable<ulong> purchaseId,
             DateTime from,
             DateTime to);
+        Task<IEnumerable<Purchase>> GetAllPurchasesByTicker(IDbConnection connection, ulong userId, string ticker);
+        Task UpdatePurchasePriceAndQuantityByPurchaseId(IDbConnection connection,
+            IEnumerable<Purchase> purchases);
 
     }
 }

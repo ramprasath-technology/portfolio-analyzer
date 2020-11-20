@@ -76,6 +76,15 @@ namespace Application.StockHoldingService
             return purchaseIds;
         }
 
+        public async Task UpdateHoldingDetails(ulong userId, Holdings holding)
+        {
+            using (var connection = _connectionService.GetOpenConnection(userId))
+            {
+                var holdingDetail = holding.HoldingDetails;
+                await _holdingsData.UpdateHoldingDetail(connection, holding.HoldingId, holdingDetail);
+            }
+        }
+
         private async Task AddNewHoldingDetails(IDbConnection connection, ulong userId, ulong stockId, HoldingDetails holdingDetails)
         {
             var holdings = new Holdings()

@@ -61,6 +61,38 @@ namespace Application.CompositionAndRecommendationService
             compositionAndRecommendation.Analyses = compositionAndRecommendationMap;
         }
 
+        private void FilterUserCriteriaForRecommendation(IEnumerable<ScraperAnalysis> scraperAnalyses,
+            decimal? percentageFromMedian, 
+            decimal? percentageFromFiftyTwoWeekHigh)
+        {
+            if (percentageFromMedian != 0 && percentageFromMedian != null)
+            {
+                scraperAnalyses = scraperAnalyses.Where(x => x.DifferenceFromMedianPercentage >= percentageFromMedian);
+            }
+            if (percentageFromFiftyTwoWeekHigh != 0 && percentageFromFiftyTwoWeekHigh != null)
+            {
+                scraperAnalyses = scraperAnalyses.Where(x => x.DecreaseFromFiftyTwoWeekHighPercentage >= percentageFromMedian);
+            }
+        }
+
+        private void FilterUserCriteriaForComposition(PortfolioComposition portfolioComposition,
+            decimal? portfolioCompositionLimit)
+        {
+            if (portfolioCompositionLimit != 0 && portfolioCompositionLimit != null)
+            {
+                portfolioComposition.IndividualStockWeightages = portfolioComposition.IndividualStockWeightages.Where(x => x.CurrentValueRatio <= portfolioCompositionLimit);
+            }
+        }
+
+
+        public async Task<Dictionary<string, ScraperAnalysis>> GetAnalystRecommendation(IEnumerable<string> tickers)
+        {
+            var recommendation = await _stockRecommendationService.GetAnalysisAndRecommendation(tickers);
+            var analysisMap = MapAnalyses(recommendation);
+
+            return analysisMap;
+        }
+
         private Dictionary<string, ScraperAnalysis> MapAnalyses(IEnumerable<ScraperAnalysis> scraperAnalyses)
         {
             var analysisMap = new Dictionary<string, ScraperAnalysis>();

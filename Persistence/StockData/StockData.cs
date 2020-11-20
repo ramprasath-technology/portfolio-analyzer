@@ -56,13 +56,7 @@ namespace Persistence.StockData
         {
             var parameters = new DynamicParameters();
             parameters.Add("ticker", ticker);
-
-            connection.Open();
-
             var stock = await connection.QueryFirstOrDefaultAsync<Stock>(selStockByTicker, parameters);
-
-            connection.Close();
-
             return stock;
         }
 
