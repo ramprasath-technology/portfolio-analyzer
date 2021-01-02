@@ -62,14 +62,17 @@ namespace Persistence.StockPurchaseData
              AND date >= ?from AND date <= ?to";
 
         private const string selPurchasesForUser =
-            @"SELECT s.comment AS Comment,
+            @" SELECT s.comment AS Comment,
                    s.`date` AS Date,
                    s.price AS Price,
                    s.purchase_id AS PurchaseId,
-                   s.stock_id AS StockId,
                    s.quantity AS Quantity,
-                   s.user_id AS UserId
+                   s.user_id AS UserId,
+                   s1.stock_id AS StockId,
+                   s1.company_name AS CompanyName,
+                   s1.stock_ticker AS Ticker
               FROM stock_stock_purchase s
+                   INNER JOIN stock_stock_data s1 ON s.stock_id = s1.stock_id
              WHERE s.user_id = ?userId;";
 
         private const string updPurchasePriceAndQuantityByPurchaseId =
@@ -132,6 +135,23 @@ namespace Persistence.StockPurchaseData
             parameters.Add("userId", userId);
 
             var purchases = await connection.QueryAsync<Purchase>(selPurchasesForUser, parameters);
+
+            return purchases;
+        }
+
+        public async Task<IEnumerable<Purchase>> GetAllPurchasesForUserWithStockData(IDbConnection connection, ulong userId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", userId);
+
+            var purchases = await connection.QueryAsync<Purchase, Stock, Purchase>(selPurchasesForUser, 
+                (purchase, stock) => 
+                {
+                  purchase.Stock = stock;                       
+                  return purchase;
+                }, 
+                param: parameters, 
+                splitOn: "StockId" );
 
             return purchases;
         }

@@ -10,5 +10,8 @@ namespace Persistence.StockSaleData
     public interface IStockSaleData
     {
         Task<Sale> AddSale(IDbConnection connection, Sale sale);
+        Task<IEnumerable<Sale>> GetSalesByPurchaseIds(IDbConnection connection,
+            ulong userId,
+            IEnumerable<ulong> purchaseIds);
     }
 }

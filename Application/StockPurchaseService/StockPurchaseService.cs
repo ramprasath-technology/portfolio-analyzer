@@ -3,6 +3,7 @@ using Domain;
 using Persistence.StockPurchaseData;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -53,11 +54,30 @@ namespace Application.StockPurchaseService
             }
         }
 
-        public async Task<IEnumerable<Purchase>> GetPurchasesForUser(ulong userId)
+        public async Task<IEnumerable<Purchase>> GetPurchasesForUser(ulong userId, 
+            IDbConnection connection = null)
         {
-            using (var conn = _connectionService.GetOpenConnection(userId))
+            if (connection == null)
             {
-                var purchases = await _stockPurchaseData.GetAllPurchasesForUser(conn, userId);
+                connection = _connectionService.GetOpenConnection(userId);
+            }
+            using (connection)
+            {
+                var purchases = await _stockPurchaseData.GetAllPurchasesForUser(connection, userId);
+                return purchases;
+            }
+        }
+
+        public async Task<IEnumerable<Purchase>> GetPurchasesForUserWithStockData(ulong userId,
+            IDbConnection connection = null)
+        {
+            if (connection == null)
+            {
+                connection = _connectionService.GetOpenConnection(userId);
+            }
+            using (connection)
+            {
+                var purchases = await _stockPurchaseData.GetAllPurchasesForUserWithStockData(connection, userId);
                 return purchases;
             }
         }

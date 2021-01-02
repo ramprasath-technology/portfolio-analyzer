@@ -46,6 +46,7 @@ using Application.CompositionAndRecommendationService;
 using Application.StockRecommendationService;
 using Application.StockSplitService;
 using Application.IndividualStockComparisonService;
+using Application.LifeTimeReturnsComparisonService;
 
 namespace API
 {
@@ -103,6 +104,7 @@ namespace API
             services.AddSingleton<IStockRecommendationService, StockRecommendationService>();
             services.AddSingleton<IStockSplitService, StockSplitService>();
             services.AddSingleton<IIndividualStockComparisonService, IndividualStockComparisonService>();
+            services.AddSingleton<ILifeTimeReturnsComparisonService, LifeTimeReturnsComparisonService>();
 
             services.AddSingleton<IStockPurchaseData, StockPurchaseData>();
             services.AddSingleton<IStockSaleData, StockSaleData>();

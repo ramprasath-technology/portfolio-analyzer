@@ -4,6 +4,7 @@ using Domain;
 using Persistence.StockSaleData;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -41,6 +42,18 @@ namespace Application.StockSaleService
 
                 return sale;
             }
+        }
+
+        public async Task<IEnumerable<Sale>> GetSalesByPurchaseIds(ulong userId, 
+            IEnumerable<ulong> purchaseIds,
+            IDbConnection connection = null)
+        {
+            if (connection == null)
+            {
+                connection = _connectionService.GetConnection(userId);
+            }
+
+            return await _stockSaleData.GetSalesByPurchaseIds(connection, userId, purchaseIds);
         }
 
     }
