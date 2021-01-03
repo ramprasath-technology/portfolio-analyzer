@@ -34,7 +34,7 @@ namespace Persistence.StockSaleData
 
         private const string _selSalesByPurchaseIds =
             @"SELECT s.comment AS Comment,
-                   s.`date` AS SaleDate,
+                   s.`date` AS Date,
                    s.date_added AS DateAdded,
                    s.price AS Price,
                    s.purchase_id AS PurchaseId,

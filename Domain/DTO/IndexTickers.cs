@@ -11,8 +11,6 @@ namespace Domain.DTO
             "VOO",
             "ONEQ",
             "QQQ",
-            "ARKK",
-            "ARKK",
             //"ARKQ",
             //"ARKW",
             //"ARKG",
