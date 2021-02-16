@@ -19,10 +19,10 @@ namespace API.Controllers
             _stockReturnsService = stockReturnsService;
        }
 
-        [HttpGet("GetAnnualizedReturnForUserHoldings/{userId}")]
-        public async Task<IActionResult> GetAnnualizedReturnForUserHoldings(ulong userId)
+        [HttpGet("GetAnnualizedReturnForUserHoldings/{userId}/{minHoldingMonths?}")]
+        public async Task<IActionResult> GetAnnualizedReturnForUserHoldings(ulong userId, uint? minHoldingMonths)
         {
-            var annualizedReturn = await _stockReturnsService.GetAnnualizedReturnForCurrentHoldings(userId);
+            var annualizedReturn = await _stockReturnsService.GetAnnualizedReturnForCurrentHoldings(userId, minHoldingMonths);
 
             return Ok(annualizedReturn);
         }

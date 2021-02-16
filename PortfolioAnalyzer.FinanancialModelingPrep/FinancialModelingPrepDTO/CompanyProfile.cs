@@ -21,5 +21,7 @@ namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO
         public string Industry { get; set; }
         [JsonPropertyName("sector")]
         public string Sector { get; set; }
+        [JsonPropertyName("country")]
+        public string Country { get; set; }
     }
 }

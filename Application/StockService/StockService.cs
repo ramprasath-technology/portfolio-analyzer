@@ -6,6 +6,8 @@ using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
 using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -71,6 +73,48 @@ namespace Application.StockService
             _connectionService.DisposeConnection(connection);
 
             return stocks;
+        }
+
+        public async Task<IEnumerable<Stock>> GetStocks(IDbConnection connection = null)
+        {
+            var dbConnection = connection == null ? _connectionService.GetConnectionToCommonShard() : connection;
+            var stocks = await _stockData.GetStocks(connection);
+            if (dbConnection != connection)
+                dbConnection.Dispose();
+
+            return stocks;
+        }
+
+        public async Task UpdateCompanyProfile(IDbConnection connection = null)
+        {
+            var dbConnection = connection == null ? _connectionService.GetConnectionToCommonShard() : connection;
+            var stocks = await GetStocks(dbConnection);
+            var stockTickerStockMap = stocks.ToDictionary(x => x.Ticker);
+            var companyProfileTasks = new List<Task<CompanyProfile>>();
+            var stockTasks = new List<Task>();
+
+            foreach (var stock in stocks)
+            {
+                companyProfileTasks.Add(GetCompanyProfile(stock.Ticker));
+                await Task.Delay(100);
+            }
+
+            var companiesProfile = await Task.WhenAll(companyProfileTasks);
+
+            foreach (var companyProfile in companiesProfile)
+            {
+                Stock stock;
+                if (stockTickerStockMap.TryGetValue(companyProfile.Symbol, out stock))
+                {
+                    stock.CompanyName = companyProfile.Profile.CompanyName;
+                    stock.Country = companyProfile.Profile.Country;
+                    stock.Industry = companyProfile.Profile.Industry;
+                    stock.Sector = companyProfile.Profile.Sector;
+                    stockTasks.Add(_stockData.UpdateStock(stock, connection));
+                }                
+            }
+
+            await Task.WhenAll(stockTasks);
         }
     }
 }

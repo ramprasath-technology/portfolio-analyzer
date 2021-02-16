@@ -19,6 +19,7 @@ namespace Persistence.StockData
         /// <returns>Stock details</returns>
         Task<Stock> GetStockByTicker(IDbConnection connection, string ticker);
         Task<IEnumerable<Stock>> GetStocksById(IDbConnection connection, IEnumerable<ulong> stockId);
-
+        Task<IEnumerable<Stock>> GetStocks(IDbConnection connection);
+        Task UpdateStock(Stock stock, IDbConnection connection);
     }
 }

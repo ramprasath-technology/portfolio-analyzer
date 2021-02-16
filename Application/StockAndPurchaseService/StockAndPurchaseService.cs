@@ -47,6 +47,10 @@ namespace Application.StockAndPurchaseService
                 stock = new Stock();
                 stock.Ticker = stockPurchase.Ticker;
                 stock.CompanyName = companyProfile.Profile.CompanyName;
+                stock.Country = companyProfile.Profile.Country;
+                stock.Industry = companyProfile.Profile.Industry;
+                stock.Sector = companyProfile.Profile.Sector;
+
                 await _stockService.AddStock(stockPurchase.UserId, stock);
             }
 

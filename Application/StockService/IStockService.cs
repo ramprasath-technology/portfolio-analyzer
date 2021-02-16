@@ -2,6 +2,7 @@
 using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,5 +15,6 @@ namespace Application.StockService
         Task<ulong> GetStockIdByTicker(ulong userId, string ticker);
         Task<Stock> GetStockByTicker(ulong userId, string ticker);
         Task<IEnumerable<Stock>> GetStocksById(ulong userId, IEnumerable<ulong> stockId);
+        Task UpdateCompanyProfile(IDbConnection connection = null);
     }
 }

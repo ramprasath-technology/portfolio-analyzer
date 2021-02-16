@@ -36,6 +36,23 @@ namespace Persistence.StockData
                    s.company_name AS CompanyName
               FROM stock_stock_data s
              WHERE s.stock_id IN ?stockId;";
+
+        private const string selAllStocks =
+            @"SELECT s.company_name AS CompanyName,
+                   s.country AS Country,
+                   s.industry AS Industry,
+                   s.sector AS Sector,
+                   s.stock_id AS StockId,
+                   s.stock_ticker AS Ticker
+              FROM stock_stock_data s;";
+
+        private const string updStock =
+            @"UPDATE stock_stock_data
+               SET company_name = ?companyName,
+                   country = ?country,
+                   industry = ?industry,
+                   sector = ?sector
+             WHERE stock_id = ?stockId;";
         #endregion
 
         public async Task<ulong> GetStockIdByTicker(string ticker, IDbConnection connection)
@@ -88,6 +105,26 @@ namespace Persistence.StockData
             connection.Dispose();
 
             return stock; ;
+        }
+
+        public async Task<IEnumerable<Stock>> GetStocks(IDbConnection connection)
+        {
+            var stocks = await connection.QueryAsync<Stock>(selAllStocks);
+            return stocks;
+        }
+
+        public async Task UpdateStock(Stock stock,
+            IDbConnection connection)
+        {
+            await connection.ExecuteAsync(updStock, 
+                new DynamicParameters(new 
+                { 
+                    companyName = stock.CompanyName, 
+                    country = stock.Country,
+                    industry = stock.Industry,
+                    sector = stock.Sector,
+                    stockId = stock.StockId
+                }));
         }
 
     }
