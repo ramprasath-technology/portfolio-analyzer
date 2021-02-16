@@ -28,5 +28,21 @@ namespace Domain.DTO.StockAnalysis
         public Dictionary<string, decimal> CurrentValueRatioByCountry { get; set; }
         public Dictionary<string, decimal> CurrentValueRatioBySector { get; set; }
         public Dictionary<string, decimal> CurrentValueRatioByIndustry { get; set; }
+
+        public PortfolioComposition()
+        {
+            CurrentValueAmountByCountry = new Dictionary<string, decimal>();
+            CurrentValueAmountByIndustry = new Dictionary<string, decimal>();
+            CurrentValueAmountBySector = new Dictionary<string, decimal>();
+            CurrentValueRatioByCountry = new Dictionary<string, decimal>();
+            CurrentValueRatioByIndustry = new Dictionary<string, decimal>();
+            CurrentValueRatioBySector = new Dictionary<string, decimal>();
+            InvestmentAmountByCountry = new Dictionary<string, decimal>();
+            InvestmentAmountByIndustry = new Dictionary<string, decimal>();
+            InvestmentAmountBySector = new Dictionary<string, decimal>();
+            InvestmentRatioByCountry = new Dictionary<string, decimal>();
+            InvestmentRatioByIndustry = new Dictionary<string, decimal>();
+            InvestmentRatioBySector = new Dictionary<string, decimal>();
+        }
     }
 }

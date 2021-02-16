@@ -135,12 +135,12 @@ namespace Application.PortfolioCompositionService
         {
             foreach (var entry in portfolioComposition.InvestmentAmountByCountry)
             {
-                portfolioComposition.InvestmentRatioByCountry[entry.Key] = entry.Value / portfolioComposition.TotalCost;
+                portfolioComposition.InvestmentRatioByCountry[entry.Key] = Math.Round((entry.Value / portfolioComposition.TotalCost) * 100, 2);
             }
 
             foreach (var entry in portfolioComposition.CurrentValueAmountByCountry)
             {
-                portfolioComposition.CurrentValueRatioByCountry[entry.Key] = entry.Value / portfolioComposition.TotalInvestmentValue;
+                portfolioComposition.CurrentValueRatioByCountry[entry.Key] = Math.Round((entry.Value / portfolioComposition.TotalInvestmentValue) * 100, 2);
             }
         }
 
@@ -148,12 +148,12 @@ namespace Application.PortfolioCompositionService
         {
             foreach (var entry in portfolioComposition.InvestmentAmountBySector)
             {
-                portfolioComposition.InvestmentRatioBySector[entry.Key] = entry.Value / portfolioComposition.TotalCost;
+                portfolioComposition.InvestmentRatioBySector[entry.Key] = Math.Round((entry.Value / portfolioComposition.TotalCost) * 100, 2);
             }
 
             foreach (var entry in portfolioComposition.CurrentValueAmountBySector)
             {
-                portfolioComposition.CurrentValueRatioBySector[entry.Key] = entry.Value / portfolioComposition.TotalInvestmentValue;
+                portfolioComposition.CurrentValueRatioBySector[entry.Key] = Math.Round((entry.Value / portfolioComposition.TotalInvestmentValue) * 100, 2);
             }
         }
 
@@ -161,12 +161,12 @@ namespace Application.PortfolioCompositionService
         {
             foreach (var entry in portfolioComposition.InvestmentAmountByIndustry)
             {
-                portfolioComposition.InvestmentRatioByIndustry[entry.Key] = entry.Value / portfolioComposition.TotalCost;
+                portfolioComposition.InvestmentRatioByIndustry[entry.Key] = Math.Round((entry.Value / portfolioComposition.TotalCost) * 100, 2);
             }
 
             foreach (var entry in portfolioComposition.CurrentValueAmountByIndustry)
             {
-                portfolioComposition.CurrentValueRatioByIndustry[entry.Key] = entry.Value / portfolioComposition.TotalInvestmentValue;
+                portfolioComposition.CurrentValueRatioByIndustry[entry.Key] = Math.Round((entry.Value / portfolioComposition.TotalInvestmentValue) * 100, 2);
             }
         }
     }

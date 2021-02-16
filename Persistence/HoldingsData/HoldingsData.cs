@@ -23,7 +23,10 @@ namespace Persistence.HoldingsData
                    s.stock_id AS StockId,
                    s.holding_details AS HoldingDetails,
                    s1.stock_ticker AS Ticker,
-                   s1.company_name AS CompanyName
+                   s1.company_name AS CompanyName,
+                   s1.country AS Country,
+                   s1.industry AS Industry,
+                   s1.sector AS Sector
               FROM stock_holding s
                    INNER JOIN stock_stock_data s1 ON s.stock_id = s1.stock_id
               WHERE s.user_id = ?userId; ";
@@ -108,7 +111,10 @@ namespace Persistence.HoldingsData
                 {
                     StockId = userHolding.StockId,
                     CompanyName = userHolding.CompanyName,
-                    Ticker = userHolding.Ticker
+                    Ticker = userHolding.Ticker,
+                    Country = userHolding.Country,
+                    Industry = userHolding.Industry,
+                    Sector = userHolding.Sector
                 };
 
                 var holding = new Holdings()

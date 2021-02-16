@@ -110,7 +110,7 @@ namespace Application.StockService
                     stock.Country = companyProfile.Profile.Country;
                     stock.Industry = companyProfile.Profile.Industry;
                     stock.Sector = companyProfile.Profile.Sector;
-                    stockTasks.Add(_stockData.UpdateStock(stock, connection));
+                    stockTasks.Add(_stockData.UpdateStock(stock, dbConnection));
                 }                
             }
 
