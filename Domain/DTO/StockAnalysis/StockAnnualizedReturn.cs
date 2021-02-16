@@ -12,7 +12,10 @@ namespace Domain.DTO.StockAnalysis
         public DateTime PurchaseDate { get; set; }
         public decimal CurrentPrice { get; set; }
         public DateTime CurrentDate { get; set; }
+        public decimal TotalReturn { get; set; }
         public double AnnualizedReturn { get; set; }
-            
+        public string AnnualizedReturnDescription { get; set; }
+        public string TotalReturnDescription { get; set; }
+
     }
 }

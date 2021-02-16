@@ -8,7 +8,7 @@ namespace Application.StockReturnsService
 {
     public interface IStockReturnsService
     {
-        Task<IEnumerable<StockAnnualizedReturn>> GetAnnualizedReturnForCurrentHoldings(ulong userId);
+        Task<IEnumerable<StockAnnualizedReturn>> GetAnnualizedReturnForCurrentHoldings(ulong userId, uint? monthsSincePurchase);
     }
 
 }

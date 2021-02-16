@@ -24,8 +24,7 @@ namespace Application.IndividualStockComparisonService
 
         public async Task<IEnumerable<IndividualStockReturn>> GetIndividualComparisonService(ulong userId)
         {
-            //var indexTickers = IndexTickers.GetAllowedIndexTickers();
-            var indexTickers = new List<string>() { "ARKK" };
+            var indexTickers = IndexTickers.GetAllowedIndexTickers();
             var comparisons = await _stockIndexComparisonService.GetComparisonWithIndex(userId, indexTickers);
             var recommendationTask = _compositionAndRecommendationService.GetAnalystRecommendation(comparisons.Select(x => x.Ticker));
             var stockReturn = new Dictionary<string, IndividualStockReturn>();

@@ -31,18 +31,21 @@ namespace Application.StockReturnsService
             _marketDataService = marketDataService;
         }
 
-        public async Task<IEnumerable<StockAnnualizedReturn>> GetAnnualizedReturnForCurrentHoldings(ulong userId)
+        public async Task<IEnumerable<StockAnnualizedReturn>> GetAnnualizedReturnForCurrentHoldings(ulong userId, uint? monthsSincePurchase)
         {
+            var toDate = monthsSincePurchase == null ? DateTime.MinValue : DateTime.Today.AddMonths((int)-monthsSincePurchase);
             var currentHoldings = await _stockHoldingService.GetAllHoldingsForUser(userId);
-            var stockIds = currentHoldings.Select(x => x.StockId);
-            var stockTask = _stockService.GetStocksById(userId, stockIds);
             var purchaseIds = ExtractPurchaseIds(currentHoldings);
+            var purchaseTask = _stockPurchaseService.GetPurchasesByIdFilteredByDates(userId, purchaseIds, DateTime.MinValue, toDate);
+            var purchases = await purchaseTask;
+            var stockIds = FilterStockIds(purchases, currentHoldings);
+            var stockTask = _stockService.GetStocksById(userId, stockIds);
             var stocks = await stockTask;
-            var purchaseTask = _stockPurchaseService.GetPurchasesById(userId, purchaseIds);
+           
             var tickers = stocks.Select(x => x.Ticker);
             var stockQuotesTask = _marketDataService.GetLastStockQuote(tickers);
             var stockQuotes = await stockQuotesTask;
-            var purchases = await purchaseTask;
+            
 
             var stockReturnModel = BuildStockReturnModel(stocks.ToDictionary(x => x.StockId), 
                 purchases.ToDictionary(x => x.PurchaseId), 
@@ -54,6 +57,27 @@ namespace Application.StockReturnsService
             stockReturnModel = stockReturnModel.OrderByDescending(x => x.AnnualizedReturn);
 
             return stockReturnModel;
+        }
+
+        private IEnumerable<ulong> FilterStockIds(IEnumerable<Purchase> purchases, IEnumerable<Holdings> holdings)
+        {
+            var stockIds = new List<ulong>();
+            var stockIdsToConsider = new HashSet<ulong>();
+
+            foreach (var purchase in purchases)
+            {
+                stockIdsToConsider.Add(purchase.StockId);
+            }
+
+            foreach (var holding in holdings)
+            {
+                if (stockIdsToConsider.Contains(holding.StockId))
+                {
+                    stockIds.Add(holding.StockId);
+                }
+            }
+
+            return stockIds;
         }
 
         private IEnumerable<ulong> ExtractPurchaseIds(IEnumerable<Holdings> holding)
@@ -84,18 +108,21 @@ namespace Application.StockReturnsService
                 var holdingDetails = userHolding.HoldingDetails;
                 foreach (var detail in holdingDetails)
                 {
-                    var purchaseData = purchase[detail.PurchaseId];
-                    var stockData = stock[purchaseData.StockId];
+                    if (purchase.ContainsKey(detail.PurchaseId)) //excludes holdings not in the filter date range
+                    {
+                        var purchaseData = purchase[detail.PurchaseId];
+                        var stockData = stock[purchaseData.StockId];
 
-                    var annualizedReturnInput = new StockAnnualizedReturn();                  
-                    annualizedReturnInput.CurrentDate = DateTime.Now.Date;
-                    annualizedReturnInput.CurrentPrice = lastQuote[stockData.Ticker].Price;
-                    annualizedReturnInput.PurchaseDate = purchaseData.Date;
-                    annualizedReturnInput.PurchasePrice = purchaseData.Price;
-                    annualizedReturnInput.Quantity = purchaseData.Quantity;
-                    annualizedReturnInput.Ticker = stockData.Ticker;
+                        var annualizedReturnInput = new StockAnnualizedReturn();
+                        annualizedReturnInput.CurrentDate = DateTime.Now.Date;
+                        annualizedReturnInput.CurrentPrice = lastQuote[stockData.Ticker].Price;
+                        annualizedReturnInput.PurchaseDate = purchaseData.Date;
+                        annualizedReturnInput.PurchasePrice = purchaseData.Price;
+                        annualizedReturnInput.Quantity = purchaseData.Quantity;
+                        annualizedReturnInput.Ticker = stockData.Ticker;
 
-                    stockReturnInputs.Add(annualizedReturnInput);
+                        stockReturnInputs.Add(annualizedReturnInput);
+                    }
                 }
             }
 
@@ -112,7 +139,10 @@ namespace Application.StockReturnsService
                 numberOfDaysStockHeld = numberOfDaysStockHeld == 0 ? 1 : numberOfDaysStockHeld;
                 var daysRatio = Math.Round(numberOfDaysInYear / numberOfDaysStockHeld, 2);
                 var cumulativeReturn = Math.Round(((stockReturn.CurrentPrice - stockReturn.PurchasePrice) / stockReturn.PurchasePrice), 2);
-                stockReturn.AnnualizedReturn = Math.Round(Math.Pow(1 + Decimal.ToDouble(cumulativeReturn), daysRatio) - 1, 4);
+                stockReturn.TotalReturn = cumulativeReturn;
+                stockReturn.AnnualizedReturn = Math.Round(Math.Pow(1 + Decimal.ToDouble(cumulativeReturn), daysRatio) - 1, 2);
+                stockReturn.AnnualizedReturnDescription = (stockReturn.AnnualizedReturn * 100) + "%";
+                stockReturn.TotalReturnDescription = (stockReturn.TotalReturn * 100) + "%";
             }
         }
 
