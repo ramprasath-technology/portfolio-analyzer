@@ -56,10 +56,13 @@ namespace Application.StockIndexComparisonService
             var dateIndexValueMap = MapIndexValuesToDate(indexValues);
             var stockQuotes = await stockQuoteTask;
             var tickerStockQuoteMap = stockQuotes.ToDictionary(x => x.Symbol);
+            
 
             foreach(var purchase in purchases)
             {
                 var ticker = stockIdTickerMap[purchase.StockId];
+                if (!tickerStockQuoteMap.ContainsKey(ticker))
+                    continue;
                 var stockPriceToday = tickerStockQuoteMap[ticker].Price;
                 var stockIndexComparison = new StockComparisonToIndex();
                 stockIndexComparison.Ticker = ticker;
