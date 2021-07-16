@@ -29,29 +29,32 @@ namespace Application.PortfolioCompositionService
             var lastQuoteForStocks = await _marketDataService.GetLastStockQuote(tickers);
             var tickerLastQuoteMap = lastQuoteForStocks.ToDictionary(x => x.Symbol);
 
-            Parallel.ForEach(holdings, (holding) =>
+            foreach (var holding in holdings)
             {
-                var individualWeightage = new IndividualStockWeightage();
-                individualWeightage.Ticker = holding.Stock.Ticker;
-                individualWeightage.Country = holding.Stock.Country;
-                individualWeightage.Sector = holding.Stock.Sector;
-                individualWeightage.Industry = holding.Stock.Industry;
-
-                foreach (var holdingDetail in holding.HoldingDetails)
+                if (tickerLastQuoteMap.ContainsKey(holding.Stock.Ticker))
                 {
-                    individualWeightage.TotalCurrentValue += tickerLastQuoteMap[individualWeightage.Ticker].Price * holdingDetail.Quantity;
-                    individualWeightage.TotalPurchasePrice += holdingDetail.Price * holdingDetail.Quantity;
+                    var individualWeightage = new IndividualStockWeightage();
+                    individualWeightage.Ticker = holding.Stock.Ticker;
+                    individualWeightage.Country = holding.Stock.Country;
+                    individualWeightage.Sector = holding.Stock.Sector;
+                    individualWeightage.Industry = holding.Stock.Industry;
+
+                    foreach (var holdingDetail in holding.HoldingDetails)
+                    {
+                        individualWeightage.TotalCurrentValue += tickerLastQuoteMap[individualWeightage.Ticker].Price * holdingDetail.Quantity;
+                        individualWeightage.TotalPurchasePrice += holdingDetail.Price * holdingDetail.Quantity;
+                    }
+
+                    FindAmountsByCountry(individualWeightage, portfolioComposition);
+                    FindAmountsByIndustry(individualWeightage, portfolioComposition);
+                    FindAmountsBySector(individualWeightage, portfolioComposition);
+
+                    portfolioComposition.TotalCost += individualWeightage.TotalPurchasePrice;
+                    portfolioComposition.TotalInvestmentValue += individualWeightage.TotalCurrentValue;
+
+                    individualWeightages.Add(individualWeightage);
                 }
-
-                FindAmountsByCountry(individualWeightage, portfolioComposition);
-                FindAmountsByIndustry(individualWeightage, portfolioComposition);
-                FindAmountsBySector(individualWeightage, portfolioComposition);
-
-                portfolioComposition.TotalCost += individualWeightage.TotalPurchasePrice;
-                portfolioComposition.TotalInvestmentValue += individualWeightage.TotalCurrentValue;
-
-                individualWeightages.Add(individualWeightage);
-            });
+            }
 
             foreach (var individualWeightage in individualWeightages)
             {
