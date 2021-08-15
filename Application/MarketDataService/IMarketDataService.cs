@@ -1,8 +1,8 @@
-﻿using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.DTO.ExternalData;
 
 namespace Application.MarketDataService
 {
@@ -10,5 +10,6 @@ namespace Application.MarketDataService
     {
         Task<DailyStockPrice> GetDailyStockPrice(string ticker, DateTime startDate, DateTime endDate);
         Task<IEnumerable<LastStockQuote>> GetLastStockQuote(IEnumerable<string> ticker);
+        Task<CompanyProfile> GetCompanyProfile(string ticker);
     }
 }

@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PortfolioAnalyzer.Finananci
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{323A00F0-6DDF-4930-8735-4411EF2CCE6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalServices", "ExternalServices\ExternalServices.csproj", "{478D5A7B-248F-4374-9873-13257E4AA47F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,18 @@ Global
 		{323A00F0-6DDF-4930-8735-4411EF2CCE6F}.Release|x86.ActiveCfg = Release|Any CPU
 		{323A00F0-6DDF-4930-8735-4411EF2CCE6F}.Release|x86.Build.0 = Release|Any CPU
 		{323A00F0-6DDF-4930-8735-4411EF2CCE6F}.Release|x86.Deploy.0 = Release|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Debug|x64.Build.0 = Debug|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Debug|x86.Build.0 = Debug|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Release|x64.ActiveCfg = Release|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Release|x64.Build.0 = Release|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Release|x86.ActiveCfg = Release|Any CPU
+		{478D5A7B-248F-4374-9873-13257E4AA47F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

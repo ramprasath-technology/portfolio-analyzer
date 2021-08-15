@@ -47,6 +47,15 @@ using Application.StockRecommendationService;
 using Application.StockSplitService;
 using Application.IndividualStockComparisonService;
 using Application.LifeTimeReturnsComparisonService;
+using Application.TransactionHistory.Fidelity;
+using static Application.TransactionHistory.Fidelity.FidelityTransactionHistoryService;
+using ExternalServices.OrchestrationService;
+using static Application.MarketDataService.MarketDataService;
+using PortfolioAnalyzer.Alphavantage.DataOrchestrationService;
+using static PortfolioAnalyzer.Alphavantage.DataOrchestrationService.AlphavantageDataOrchestrationService;
+using static Application.ConfigService.AlphaVantageServiceConfig;
+using Domain.DTO.ExternalData;
+using Application.TransactionHistory;
 
 namespace API
 {
@@ -73,6 +82,49 @@ namespace API
             });
             services.AddControllers();
 
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            services.AddTransient<FidelityTransactionHistoryService>();          
+            services.AddTransient<FinancialModellingPrepDataOrchestrationService>();
+            services.AddTransient<AlphaVantageServiceConfig>();
+            services.AddTransient<FinancialModelPrepServiceConfig>();
+            services.AddTransient<AlphavantageDataOrchestrationService>();
+
+            services.AddTransient<ServiceResolver>(serviceProvider => key =>
+            {
+                switch (key)
+                {
+                    case TransactionTypes.FIDELITY:
+                        return serviceProvider.GetService<FidelityTransactionHistoryService>();                
+                    default:
+                        throw new KeyNotFoundException();
+                }
+            });
+            services.AddTransient<ExternalServiceResolver>(serviceProvider => key =>
+            {
+                switch (key)
+                {
+                    case ExternalServiceTypes.ALPHAVANTAGE:
+                        return serviceProvider.GetService<AlphavantageDataOrchestrationService>();
+                    case ExternalServiceTypes.FINANCIALMODELINGPREP:
+                        return serviceProvider.GetService<FinancialModellingPrepDataOrchestrationService>();
+                    default:
+                        throw new KeyNotFoundException();
+                }
+            });
+            services.AddTransient<ExternalServiceConfigResolver>(serviceProvider => key =>
+            {
+                switch (key)
+                {
+                    case ExternalServiceTypes.ALPHAVANTAGE:
+                        return serviceProvider.GetService<AlphaVantageServiceConfig>();
+                    case ExternalServiceTypes.FINANCIALMODELINGPREP:
+                        return serviceProvider.GetService<FinancialModelPrepServiceConfig>();
+                    default:
+                        throw new KeyNotFoundException();
+                }
+            });
+
             services.AddSingleton<IConnectionService, ConnectionService>();
             services.AddSingleton<IConfigService, ConfigService>();
 
@@ -93,8 +145,7 @@ namespace API
             services.AddSingleton<IStockTotalValueService, StockTotalValueService>();
             services.AddSingleton<ITotalValueComparisonService, TotalValueComparisonService>();
             services.AddSingleton<IPortfolioCompositionService, PortfolioCompositionService>();
-            services.AddSingleton<IMarketDataService, MarketDataService>();
-            services.AddSingleton<IDataOrchestrationService, DataOrchestrationService>();
+            services.AddSingleton<IMarketDataService, MarketDataService>();        
             services.AddSingleton<IDailyStockPriceService, DailyStockPriceService>();
             services.AddSingleton<ILastStockQuoteService, LastStockQuoteService>();
             services.AddSingleton<IIndexAnalysisService, IndexAnalysisService>();
@@ -105,7 +156,7 @@ namespace API
             services.AddSingleton<IStockSplitService, StockSplitService>();
             services.AddSingleton<IIndividualStockComparisonService, IndividualStockComparisonService>();
             services.AddSingleton<ILifeTimeReturnsComparisonService, LifeTimeReturnsComparisonService>();
-
+          
             services.AddSingleton<IStockPurchaseData, StockPurchaseData>();
             services.AddSingleton<IStockSaleData, StockSaleData>();
             services.AddSingleton<IStockData, StockData>();
@@ -113,6 +164,9 @@ namespace API
             services.AddSingleton<IStockIndexValueData, StockIndexValueData>();
             services.AddSingleton<IUserData, UserData>();
             services.AddSingleton<IHoldingsData, HoldingsData>();
+
+            services.AddSingleton<PortfolioAnalyzer.Alphavantage.CompanyProfileService.ICompanyProfileService, 
+                PortfolioAnalyzer.Alphavantage.CompanyProfileService.CompanyProfileService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

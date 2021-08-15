@@ -1,4 +1,5 @@
-﻿using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
+﻿using Domain.DTO.ExternalData;
+using ExternalServices.OrchestrationService;
 using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService.LastStockQuoteService;
 using System;
 using System.Collections.Generic;
@@ -7,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService.DataOrchestrationService
 {
-    public class DataOrchestrationService : IDataOrchestrationService
+    public class FinancialModellingPrepDataOrchestrationService : IDataOrchestrationService
     {
         private readonly ICompanyProfileService _companyProfileService;
         private readonly IDailyStockPriceService _dailyStockPriceService;
         private readonly ILastStockQuoteService _lastStockQuoteService;
 
-        public DataOrchestrationService(ICompanyProfileService companyProfileService, 
+        public FinancialModellingPrepDataOrchestrationService(ICompanyProfileService companyProfileService, 
             IDailyStockPriceService dailyStockPriceService,
             ILastStockQuoteService lastStockQuoteService)
         {
@@ -48,7 +49,6 @@ namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService
 
             return lastKnownStockQuotes;
         }
-
 
     }
 }

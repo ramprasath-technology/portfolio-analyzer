@@ -6,27 +6,12 @@ using System.Text;
 namespace Application.ConfigService
 {
     public class ConfigService : IConfigService
-    {
+    {     
         private IConfiguration _configuration;
 
         public ConfigService(IConfiguration configuration)
         {
             _configuration = configuration;
-        }
-
-        public string GetCompanyProfileUrl()
-        {
-            return _configuration.GetSection("URLs").GetSection("FinancialModelingPrepProfile").Value;
-        }
-
-        public string GetDailyPriceUrl()
-        {
-            return _configuration.GetSection("URLs").GetSection("FinancialModelingPrepDailyPrice").Value;
-        }
-
-        public string GetStockQuoteUrl()
-        {
-            return _configuration.GetSection("URLs").GetSection("FinancialModelingPrepLastQuotePrice").Value;
         }
 
         public string GetFinancialModelingPrepKey()
@@ -37,6 +22,16 @@ namespace Application.ConfigService
         public string GetCNNStockInfoUrl()
         {
             return _configuration.GetSection("URLs").GetSection("CNNStockInformation").Value;
+        }
+
+        public string GetExternalDataServiceName()
+        {
+            return _configuration.GetSection("ExternalServices").GetSection("CurrentStockDataService").Value;
+        }
+
+        public string GetFidelityFilePath()
+        {
+            return _configuration.GetSection("TransactionFilePath").GetSection("Fidelity").Value;
         }
     }
 }

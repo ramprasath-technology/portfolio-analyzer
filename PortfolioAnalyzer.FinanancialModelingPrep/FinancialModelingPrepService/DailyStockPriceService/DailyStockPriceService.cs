@@ -1,4 +1,4 @@
-﻿using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
+﻿using Domain.DTO.ExternalData;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

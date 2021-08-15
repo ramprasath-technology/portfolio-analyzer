@@ -3,6 +3,7 @@ using Domain;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,6 +80,19 @@ namespace Persistence.StockPurchaseData
             @"UPDATE stock_stock_purchase
                SET price = ?price, quantity = ?quantity
              WHERE purchase_id = ?purchaseId;";
+
+        private const string selLastPurchaseForUser =
+            @"SELECT 
+	            sp.purchase_id AS PurchaseId,
+                sp.user_id AS UserId,
+                sp.stock_id AS StockId,
+                sp.quantity AS Quantity,
+                sp.price AS Price,
+                sp.date AS Date,
+                sp.comment AS Comment
+             FROM stock_stock_purchase sp
+            WHERE sp.user_id = ?userId
+            ORDER BY date DESC LIMIT 1;";
         #endregion
 
         public async Task<Purchase> AddPurchase(Purchase purchase, IDbConnection connection)
@@ -187,10 +201,19 @@ namespace Persistence.StockPurchaseData
                 catch (Exception ex)
                 {
                     tran.Rollback();
-                }
-                
-            }           
-           
+                }                
+            }                      
+        }
+
+        public async Task<Purchase> GetLastPurchaseForUser(ulong userId,
+            IDbConnection connection)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", userId);
+
+            var purchase = await connection.QueryAsync<Purchase>(selLastPurchaseForUser, parameters);
+
+            return purchase.FirstOrDefault();         
         }
     }
 }

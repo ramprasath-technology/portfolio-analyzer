@@ -98,5 +98,37 @@ namespace Application.StockPurchaseService
                 await _stockPurchaseData.UpdatePurchasePriceAndQuantityByPurchaseId(conn, purchases);
             }
         }
+
+        public Task<Purchase> GetLastPurchaseForUser(ulong userId, IDbConnection connection = null)
+        {
+            var connectionPresent = false;
+            SetConnectionIfNotPassed(userId, ref connection, ref connectionPresent);
+           
+            var lastPurchase = _stockPurchaseData.GetLastPurchaseForUser(userId, connection);
+
+            CloseConnection(connection, connectionPresent);
+            return lastPurchase;
+            
+        }
+
+        private void SetConnectionIfNotPassed(ulong userId, ref IDbConnection connection, ref bool connectionPresent)
+        {
+            if (connection == null)
+            {
+                connection = _connectionService.GetOpenConnection(userId);
+            }
+            else
+            {
+                connectionPresent = true;
+            }           
+        }
+
+        private void CloseConnection(IDbConnection connection, bool connectionPresent)
+        {
+            if (!connectionPresent)
+            {
+                connection.Dispose();
+            }
+        }
     }
 }

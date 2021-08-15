@@ -5,7 +5,8 @@
 </PropertyGroup>
 
 <ItemGroup>
-  <PackageReference Include="System.Text.Json" Version="4.7.1" />
+  <ProjectReference Include="..\Domain\Domain.csproj" />
+  <ProjectReference Include="..\ExternalServices\ExternalServices.csproj" />
 </ItemGroup>
 
 </Project>

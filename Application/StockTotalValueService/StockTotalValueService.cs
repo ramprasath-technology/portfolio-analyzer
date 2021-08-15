@@ -3,7 +3,7 @@ using Application.StockHoldingService;
 using Application.StockPurchaseService;
 using Domain;
 using Domain.DTO.StockAnalysis;
-using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
+using Domain.DTO.ExternalData;
 using System;
 using System.Collections.Generic;
 using System.Linq;

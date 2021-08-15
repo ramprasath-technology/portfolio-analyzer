@@ -21,5 +21,6 @@ namespace Application.StockPurchaseService
         Task UpdatePurchasePriceAndQuantityByPurchaseId(ulong userId, IEnumerable<Purchase> purchases);
         Task<IEnumerable<Purchase>> GetPurchasesForUserWithStockData(ulong userId,
             IDbConnection connection = null);
+        Task<Purchase> GetLastPurchaseForUser(ulong userId, IDbConnection connection = null);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO
+namespace Domain.DTO.ExternalData
 {
     public class CompanyProfile
     {

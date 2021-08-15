@@ -8,4 +8,8 @@
     <PackageReference Include="ThreeFourteen.AlphaVantage" Version="1.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ExternalServices\ExternalServices.csproj" />
+  </ItemGroup>
+
 </Project>

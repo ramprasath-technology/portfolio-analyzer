@@ -21,6 +21,7 @@ namespace Persistence.StockPurchaseData
         Task UpdatePurchasePriceAndQuantityByPurchaseId(IDbConnection connection,
             IEnumerable<Purchase> purchases);
         Task<IEnumerable<Purchase>> GetAllPurchasesForUserWithStockData(IDbConnection connection, ulong userId);
+        Task<Purchase> GetLastPurchaseForUser(ulong userId, IDbConnection connection);
 
     }
 }

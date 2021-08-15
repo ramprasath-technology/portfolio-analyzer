@@ -2,7 +2,7 @@
 using Application.Connection;
 using Domain;
 using Persistence.StockData;
-using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
+using Domain.DTO.ExternalData;
 using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService;
 using System;
 using System.Collections.Generic;
@@ -10,22 +10,23 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.MarketDataService;
 
 namespace Application.StockService
 {
     public class StockService : IStockService
     {
         private readonly IStockData _stockData;
-        private readonly IConfigService _configService;
         private readonly IConnectionService _connectionService;
-        private readonly ICompanyProfileService _companyProfileService;
+        private readonly IMarketDataService _marketDataService;
         
-        public StockService(IStockData stockData, IConfigService configService, IConnectionService connectionService, ICompanyProfileService companyProfileService)
+        public StockService(IStockData stockData, 
+            IConnectionService connectionService, 
+            IMarketDataService marketDataService)
         {
             _stockData = stockData;
             _connectionService = connectionService;
-            _configService = configService;
-            _companyProfileService = companyProfileService;
+            _marketDataService = marketDataService;
         }
 
         public async Task<Stock> AddStock(ulong userId, Stock stock)
@@ -57,9 +58,7 @@ namespace Application.StockService
 
         public async Task<CompanyProfile> GetCompanyProfile(string ticker)
         {
-            var url = _configService.GetCompanyProfileUrl();
-            var apiKey = _configService.GetFinancialModelingPrepKey();
-            var companyProfile = await _companyProfileService.GetCompanyProfile(url, apiKey, ticker);
+            var companyProfile = await _marketDataService.GetCompanyProfile(ticker);
 
             return companyProfile;
         }

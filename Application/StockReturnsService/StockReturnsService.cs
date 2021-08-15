@@ -10,7 +10,7 @@ using Application.StockQuoteService;
 using Application.MarketDataService;
 using Application.StockPurchaseService;
 using Domain.DTO.StockAnalysis;
-using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepDTO;
+using Domain.DTO.ExternalData;
 
 namespace Application.StockReturnsService
 {
