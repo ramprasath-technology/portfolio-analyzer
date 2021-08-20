@@ -46,11 +46,12 @@ namespace Application.StockIndexComparisonService
             var purchaseIds = GetPurchaseIdsFromHolding(holdings);
             var stocks = await stockTask;
             var purchaseTask = GetPurchases(userId, purchaseIds, from, to);
-            var tickers = GetTickerFromStockInformation(stocks).ToList();           
+            var purchases = await purchaseTask;
+            var stockIdsInPurchases = purchases.Select(x => x.StockId).Distinct();
+            var tickers = GetTickerFromStockInformation(stocks.Where(x => stockIdsInPurchases.Contains(x.StockId))).ToList();           
             tickers.AddRange(indexTickers);
             var stockQuoteTask = _marketDataService.GetLastStockQuote(tickers);
             var stockIdTickerMap = MapStockIdToTicker(stocks);
-            var purchases = await purchaseTask;
             var purchaseDates = GetPurchaseDates(purchases);
             var indexValues = await _stockIndexValueService.GetPricesForGivenIndexTickersAndDates(userId, indexTickers, purchaseDates);
             var dateIndexValueMap = MapIndexValuesToDate(indexValues);

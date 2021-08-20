@@ -26,8 +26,8 @@ namespace Application.StockAndPurchaseService
         public async Task<StockPurchase> AddStockAndPurchaseInfo(StockPurchase stockPurchase)
         {
             stockPurchase.Stock = await AddStockInfo(stockPurchase);
-            //stockPurchase.StockId = stockPurchase.Stock.StockId;
-            //stockPurchase.Purchase = await AddPurchaseInfo(stockPurchase.StockId, stockPurchase);
+            stockPurchase.StockId = stockPurchase.Stock.StockId;
+            stockPurchase.Purchase = await AddPurchaseInfo(stockPurchase.StockId, stockPurchase);
 
             return stockPurchase;
         }

@@ -11,5 +11,6 @@ namespace Application.TransactionHistory.Fidelity
         public const string SYMBOL = "Symbol";
         public const string QUANTITY = "Quantity";
         public const string PRICE = "Price";
+        public const string SECURITY_DESCRIPTION = "Security Description";
     }
 }

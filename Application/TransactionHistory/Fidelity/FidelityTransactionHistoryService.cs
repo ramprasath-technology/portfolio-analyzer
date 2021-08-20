@@ -1,4 +1,5 @@
 ﻿using Application.StockAndPurchaseService;
+using Application.StockHoldingService;
 using Application.StockPurchaseService;
 using Domain;
 using Domain.DTO;
@@ -19,11 +20,15 @@ namespace Application.TransactionHistory.Fidelity
         public delegate ITransactionHistoryService ServiceResolver(string key);
         private readonly IStockAndPurchaseService _stockPurchaseService;
         private readonly IStockPurchaseService _purchaseService;
+        private readonly IStockHoldingService _stockHoldingService;
+
         public FidelityTransactionHistoryService(IStockAndPurchaseService stockPurchaseService,
-            IStockPurchaseService purchaseService)
+            IStockPurchaseService purchaseService,
+            IStockHoldingService stockHoldingService)
         {
             _stockPurchaseService = stockPurchaseService;
             _purchaseService = purchaseService;
+            _stockHoldingService = stockHoldingService;
         }
 
         public async Task ImportTransactionHistory(ulong userId, string fileName)
@@ -55,7 +60,8 @@ namespace Application.TransactionHistory.Fidelity
                     );
                     foreach (var purchase in purchases)
                     {
-                        await _stockPurchaseService.AddStockAndPurchaseInfo(purchase);
+                        var stockPurchase = await _stockPurchaseService.AddStockAndPurchaseInfo(purchase);
+                        await _stockHoldingService.AddPurchaseToHoldings(userId, stockPurchase.Purchase);
                     }
                 }
             }          
@@ -66,7 +72,7 @@ namespace Application.TransactionHistory.Fidelity
             var filePath = $"{fileName}";
             using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
             {
-                using (var reader = ExcelReaderFactory.CreateCsvReader(stream))
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
                 {
                     var result = reader.AsDataSet();
                     return result.Tables;
@@ -120,7 +126,9 @@ namespace Application.TransactionHistory.Fidelity
                         var transactionType = transactions.Rows[i][columns.Action];
                         if (transactionType != null &&
                             transactionType.GetType() == typeof(string) &&
-                            DoesTransactionTypeMatch(allowedTypes, transactionType.ToString()))
+                            DoesTransactionTypeMatch(allowedTypes, transactionType.ToString()) &&
+                            !IsSecurityDescriptionCash(transactions.Rows[i][columns.SecurityDescription].ToString())
+                            )
                         {
                             filteredData.Add(transactions.Rows[i].ItemArray);
                         }
@@ -174,6 +182,10 @@ namespace Application.TransactionHistory.Fidelity
             {
                 columns.RunDate = index;
             }
+            else if (columnHeader.Contains(FidelityColumnNames.SECURITY_DESCRIPTION))
+            {
+                columns.SecurityDescription = index;
+            }
         }
 
         private bool CheckIfColumnIndexesAreSet(FidelityTransactionColumns columnMapping)
@@ -190,6 +202,15 @@ namespace Application.TransactionHistory.Fidelity
                     return true;
             }
 
+            return false;
+        }
+
+        private bool IsSecurityDescriptionCash(string securityDescription)
+        {
+            if (securityDescription.ToLower() == "cash")
+            {
+                return true;
+            }
             return false;
         }
 

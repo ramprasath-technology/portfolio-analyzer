@@ -10,7 +10,7 @@ namespace Domain.DTO
         {
             "VOO",
             "ONEQ",
-            "QQQ",
+            //"QQQ",
             //"ARKQ",
             //"ARKW",
             //"ARKG",

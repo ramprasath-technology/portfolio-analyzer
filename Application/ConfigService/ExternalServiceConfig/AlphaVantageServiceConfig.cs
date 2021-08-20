@@ -31,7 +31,7 @@ namespace Application.ConfigService
 
         public string GetStockQuoteUrl()
         {
-            throw new NotImplementedException();
+            return _configuration.GetSection("URLs").GetSection("AlphaVantageStockQuote").Value;
         }
     }
 }
