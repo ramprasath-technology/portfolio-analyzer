@@ -5,6 +5,7 @@ using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService;
 using PortfolioAnalyzer.FinanancialModelingPrep.FinancialModelingPrepService.DataOrchestrationService;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Application.ConfigService.AlphaVantageServiceConfig;
@@ -40,12 +41,11 @@ namespace Application.MarketDataService
             return dailyStockPrice;
         }
 
-        public async Task<IEnumerable<LastStockQuote>> GetLastStockQuote(IEnumerable<string> ticker)
+        public async Task<IEnumerable<LastStockQuote>> GetLastStockQuote(IEnumerable<string> tickers)
         {
             var baseUrl = _externalServiceConfig.GetStockQuoteUrl();
             var apiKey = _externalServiceConfig.GetKey();
-
-            var lastStockQuote = await _dataOrchestrationService.GetLastStockQuotes(baseUrl, apiKey, ticker);
+            var lastStockQuote = await _dataOrchestrationService.GetLastStockQuotes(baseUrl, apiKey, tickers);
 
             return lastStockQuote;
         }
