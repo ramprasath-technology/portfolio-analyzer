@@ -34,30 +34,36 @@ namespace Application.StockSplitService
             var purchases = await purchaseTask;
             var holdings = await holdingTask;
             var requiredHolding = holdings.Where(x => x.Stock.Ticker == splitDetails.Ticker).First();
-            UpdatePurchases(purchases, splitDetails);
-            UpdateUserHoldings(requiredHolding, splitDetails);
+            var purchaseIdsUpdated = UpdatePurchases(purchases, splitDetails);
+            UpdateUserHoldings(requiredHolding, splitDetails, purchaseIdsUpdated);
             await _stockPurchaseService.UpdatePurchasePriceAndQuantityByPurchaseId(userId, purchases);
             await _holdingService.UpdateHoldingDetails(userId, requiredHolding);      
         }
 
-        private void UpdateUserHoldings(Holdings holding, StockSplit splitDetails)
+        private void UpdateUserHoldings(Holdings holding, 
+            StockSplit splitDetails, 
+            IEnumerable<ulong> purchaseIdsUpdated)
         {
             var ratio = splitDetails.NewStockRatio / splitDetails.OldStockRatio;          
-            if (holding != null)
+            if (holding != null && purchaseIdsUpdated.Count() > 0)
             {
                 var holdingDetails = holding.HoldingDetails;
                 foreach (var detail in holdingDetails)
                 {
-                    detail.Price = detail.Price / ratio;
-                    detail.Quantity = detail.Quantity * ratio;
+                    if (purchaseIdsUpdated.Contains(detail.PurchaseId))
+                    {
+                        detail.Price = detail.Price / ratio;
+                        detail.Quantity = detail.Quantity * ratio;
+                    }
                 }
             }
             
         }
 
-        private void UpdatePurchases(IEnumerable<Purchase> purchases, StockSplit splitDetails)
+        private IEnumerable<ulong> UpdatePurchases(IEnumerable<Purchase> purchases, StockSplit splitDetails)
         {
             var applicablePurchases = purchases.Where(x => x.Date < splitDetails.EffectiveDate);
+            var purchaseIdsUpdated = new List<ulong>();
             if (splitDetails.LastSplitDate != null)
             {
                 applicablePurchases = applicablePurchases.Where(x => x.Date >= splitDetails.LastSplitDate);
@@ -65,12 +71,14 @@ namespace Application.StockSplitService
             if (splitDetails.NewStockRatio > splitDetails.OldStockRatio)
             {
                 var ratio = splitDetails.NewStockRatio / splitDetails.OldStockRatio;
-                foreach (var purchase in purchases)
+                foreach (var purchase in applicablePurchases)
                 {
                     purchase.Price = purchase.Price / ratio;
                     purchase.Quantity = purchase.Quantity * ratio;
+                    purchaseIdsUpdated.Add(purchase.PurchaseId);
                 }
             }
+            return purchaseIdsUpdated;
         }
     }
 }
