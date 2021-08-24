@@ -34,7 +34,7 @@ namespace Application.StockAndPurchaseService
 
         private async Task<Stock> AddStockInfo(StockPurchase stockPurchase)
         {
-            var stock = await _stockService.GetStockByTicker(stockPurchase.UserId, stockPurchase.Ticker);
+            var stock = await _stockService.GetStockByTicker(stockPurchase.UserId, stockPurchase.Ticker.Trim());
 
             if (stock == null)
             {
@@ -43,18 +43,27 @@ namespace Application.StockAndPurchaseService
                 {
                     throw new ArgumentException($"Ticket symbol is not valid");
                 }
-
                 stock = new Stock();
-                stock.Ticker = stockPurchase.Ticker;
-                stock.CompanyName = companyProfile.Profile.CompanyName;
+                stock.Ticker = stockPurchase.Ticker.Trim();
+                stock.CompanyName = FormatCompanyInformation(companyProfile.Profile.CompanyName, 100);
                 stock.Country = companyProfile.Profile.Country;
-                stock.Industry = companyProfile.Profile.Industry;
-                stock.Sector = companyProfile.Profile.Sector;
+                stock.Industry = FormatCompanyInformation(companyProfile.Profile.Industry, 50);
+                stock.Sector = FormatCompanyInformation(companyProfile.Profile.Sector, 50);
 
                 await _stockService.AddStock(stockPurchase.UserId, stock);
             }
 
             return stock;
+        }
+
+        private string FormatCompanyInformation(string detail, int maxLength)
+        {
+            if (!string.IsNullOrEmpty(detail))
+            {
+                return detail.Substring(0, Math.Min(detail.Length, maxLength)).Trim();
+            }
+
+            return detail;
         }
 
         private async Task<Purchase> AddPurchaseInfo(ulong stockId, StockPurchase stockPurchase)
