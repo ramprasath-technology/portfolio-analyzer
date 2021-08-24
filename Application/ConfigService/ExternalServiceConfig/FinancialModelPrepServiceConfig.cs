@@ -25,7 +25,7 @@ namespace Application.ConfigService
 
         public string GetKey()
         {
-            throw new NotImplementedException();
+            return _configuration.GetSection("APIKeys").GetSection("FinancialModelingPrep").Value;
         }
 
         public string GetStockQuoteUrl()
