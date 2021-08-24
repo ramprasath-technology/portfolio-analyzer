@@ -12,8 +12,8 @@ namespace Persistence.StockData
     {
         #region Queries
         private const string insStock =
-            @"INSERT INTO stock_stock_data(stock_ticker, company_name)
-                VALUES (?ticker, ?companyName);
+            @"INSERT INTO stock_stock_data(stock_ticker, company_name, country, industry, sector)
+                VALUES (?ticker, ?companyName, ?country, ?industry, ?sector);
               SELECT LAST_INSERT_ID();";
 
         private const string selStockId =
@@ -98,6 +98,9 @@ namespace Persistence.StockData
             var parameters = new DynamicParameters();
             parameters.Add("ticker", stock.Ticker);
             parameters.Add("companyName", stock.CompanyName);
+            parameters.Add("country", stock.Country);
+            parameters.Add("industry", stock.Industry);
+            parameters.Add("sector", stock.Sector);
 
             var stockId = await connection.QueryFirstAsync<ulong>(insStock, parameters);
             stock.StockId = stockId;
