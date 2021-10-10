@@ -1,4 +1,5 @@
 ﻿using Application.CompositionAndRecommendationService;
+using Application.ExtensionMethods;
 using Application.StockIndexComparisonService;
 using Domain.DTO;
 using Domain.DTO.StockAnalysis;
@@ -71,16 +72,9 @@ namespace Application.IndividualStockComparisonService
                 entry.TotalReturnPercentage = Decimal.Round(((entry.TotalCurrentValue - entry.TotalInvestedAmount) / entry.TotalInvestedAmount) * 100, 2);
                 entry.PercentageOfPortfolio = Decimal.Round((entry.TotalCurrentValue / totalPorfolioValue) * 100, 2);
                 entry.PercentageOfInvestedAmount = Decimal.Round((entry.TotalInvestedAmount / totalInvestment) * 100, 2);
-                var indexGain = 0.0m;
-                foreach (var indexValue in entry.IndexReturns.Values)
-                {
-                    indexValue.TotalReturnPercentage = Decimal.Round(((indexValue.TotalCurrentValue - entry.TotalInvestedAmount) / entry.TotalInvestedAmount) * 100, 2);
-                    if (indexValue.TotalReturnPercentage > indexGain)
-                    {
-                        indexGain = indexValue.TotalReturnPercentage;
-                    }
-                }
-                entry.DifferenceFromBiggestIndexGain = entry.TotalReturnPercentage - indexGain;
+                var maxIndexGain = GetBiggestIndexGain(entry.IndexReturns.Values);
+                var maxIndexGainPercentage = GetBiggestIndexGainPercentage(maxIndexGain, entry.TotalInvestedAmount);
+                entry.DifferenceFromBiggestIndexGain = entry.TotalReturnPercentage - maxIndexGainPercentage;
                 if (recommendation.ContainsKey(entry.Ticker))
                 {
                     entry.DifferenceFromMedianPriceTargetPercentage = recommendation[entry.Ticker].DifferenceFromMedianPercentage;
@@ -90,6 +84,28 @@ namespace Application.IndividualStockComparisonService
             }
 
             return individualReturns.OrderByDescending(x => x.DifferenceFromBiggestIndexGain);          
+        }
+
+        private decimal GetBiggestIndexGain(IEnumerable<IndexReturn> indexReturns)
+        {
+            if (indexReturns.Count() == 0)
+            {
+                return 0.0m;
+            }
+            var indexGain = indexReturns.First().TotalCurrentValue;
+
+            foreach (var indexReturn in indexReturns)
+            {
+                indexGain = Math.Max(indexGain, indexReturn.TotalCurrentValue);
+            }
+
+            return indexGain;
+        }
+
+        private decimal GetBiggestIndexGainPercentage(decimal indexGain, decimal totalAmountInvested)
+        {
+            var gainPercentage = ((indexGain - totalAmountInvested) / totalAmountInvested) * 100;
+            return gainPercentage.RoundDecimal();
         }
     }
 }
