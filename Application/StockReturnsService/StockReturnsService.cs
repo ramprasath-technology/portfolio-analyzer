@@ -33,7 +33,7 @@ namespace Application.StockReturnsService
 
         public async Task<IEnumerable<StockAnnualizedReturn>> GetAnnualizedReturnForCurrentHoldings(ulong userId, uint? monthsSincePurchase)
         {
-            var toDate = monthsSincePurchase == null ? DateTime.MinValue : DateTime.Today.AddMonths((int)-monthsSincePurchase);
+            var toDate = monthsSincePurchase == null ? DateTime.MaxValue : DateTime.Today.AddMonths((int)-monthsSincePurchase);
             var currentHoldings = await _stockHoldingService.GetAllHoldingsForUser(userId);
             var purchaseIds = ExtractPurchaseIds(currentHoldings);
             var purchaseTask = _stockPurchaseService.GetPurchasesByIdFilteredByDates(userId, purchaseIds, DateTime.MinValue, toDate);
@@ -112,16 +112,18 @@ namespace Application.StockReturnsService
                     {
                         var purchaseData = purchase[detail.PurchaseId];
                         var stockData = stock[purchaseData.StockId];
+                        if (lastQuote.ContainsKey(stockData.Ticker))
+                        {
+                            var annualizedReturnInput = new StockAnnualizedReturn();
+                            annualizedReturnInput.CurrentDate = DateTime.Now.Date;
+                            annualizedReturnInput.CurrentPrice = lastQuote[stockData.Ticker].Price;
+                            annualizedReturnInput.PurchaseDate = purchaseData.Date;
+                            annualizedReturnInput.PurchasePrice = purchaseData.Price;
+                            annualizedReturnInput.Quantity = purchaseData.Quantity;
+                            annualizedReturnInput.Ticker = stockData.Ticker;
 
-                        var annualizedReturnInput = new StockAnnualizedReturn();
-                        annualizedReturnInput.CurrentDate = DateTime.Now.Date;
-                        annualizedReturnInput.CurrentPrice = lastQuote[stockData.Ticker].Price;
-                        annualizedReturnInput.PurchaseDate = purchaseData.Date;
-                        annualizedReturnInput.PurchasePrice = purchaseData.Price;
-                        annualizedReturnInput.Quantity = purchaseData.Quantity;
-                        annualizedReturnInput.Ticker = stockData.Ticker;
-
-                        stockReturnInputs.Add(annualizedReturnInput);
+                            stockReturnInputs.Add(annualizedReturnInput);
+                        }
                     }
                 }
             }
