@@ -73,64 +73,73 @@ namespace Application.PortfolioCompositionService
 
         private void FindAmountsByCountry(IndividualStockWeightage individualWeightage, PortfolioComposition portfolioComposition)
         {
-            if (!portfolioComposition.InvestmentAmountByCountry.ContainsKey(individualWeightage.Country))
+            if (!string.IsNullOrEmpty(individualWeightage.Country))
             {
-                portfolioComposition.InvestmentAmountByCountry[individualWeightage.Country] = individualWeightage.TotalPurchasePrice;
-            }
-            else
-            {
-                portfolioComposition.InvestmentAmountByCountry[individualWeightage.Country] += individualWeightage.TotalPurchasePrice;
-            }
+                if (!portfolioComposition.InvestmentAmountByCountry.ContainsKey(individualWeightage.Country))
+                {
+                    portfolioComposition.InvestmentAmountByCountry[individualWeightage.Country] = individualWeightage.TotalPurchasePrice;
+                }
+                else
+                {
+                    portfolioComposition.InvestmentAmountByCountry[individualWeightage.Country] += individualWeightage.TotalPurchasePrice;
+                }
 
-            if (!portfolioComposition.CurrentValueAmountByCountry.ContainsKey(individualWeightage.Country))
-            {
-                portfolioComposition.CurrentValueAmountByCountry[individualWeightage.Country] = individualWeightage.TotalCurrentValue;
-            }
-            else
-            {
-                portfolioComposition.CurrentValueAmountByCountry[individualWeightage.Country] += individualWeightage.TotalCurrentValue;
+                if (!portfolioComposition.CurrentValueAmountByCountry.ContainsKey(individualWeightage.Country))
+                {
+                    portfolioComposition.CurrentValueAmountByCountry[individualWeightage.Country] = individualWeightage.TotalCurrentValue;
+                }
+                else
+                {
+                    portfolioComposition.CurrentValueAmountByCountry[individualWeightage.Country] += individualWeightage.TotalCurrentValue;
+                }
             }
         }
 
         private void FindAmountsByIndustry(IndividualStockWeightage individualWeightage, PortfolioComposition portfolioComposition)
         {
-            if (!portfolioComposition.InvestmentAmountByIndustry.ContainsKey(individualWeightage.Industry))
+            if (!string.IsNullOrEmpty(individualWeightage.Industry))
             {
-                portfolioComposition.InvestmentAmountByIndustry[individualWeightage.Industry] = individualWeightage.TotalPurchasePrice;
-            }
-            else
-            {
-                portfolioComposition.InvestmentAmountByIndustry[individualWeightage.Industry] += individualWeightage.TotalPurchasePrice;
-            }
+                if (!portfolioComposition.InvestmentAmountByIndustry.ContainsKey(individualWeightage.Industry))
+                {
+                    portfolioComposition.InvestmentAmountByIndustry[individualWeightage.Industry] = individualWeightage.TotalPurchasePrice;
+                }
+                else
+                {
+                    portfolioComposition.InvestmentAmountByIndustry[individualWeightage.Industry] += individualWeightage.TotalPurchasePrice;
+                }
 
-            if (!portfolioComposition.CurrentValueAmountByIndustry.ContainsKey(individualWeightage.Industry))
-            {
-                portfolioComposition.CurrentValueAmountByIndustry[individualWeightage.Industry] = individualWeightage.TotalCurrentValue;
-            }
-            else
-            {
-                portfolioComposition.CurrentValueAmountByIndustry[individualWeightage.Industry] += individualWeightage.TotalCurrentValue;
+                if (!portfolioComposition.CurrentValueAmountByIndustry.ContainsKey(individualWeightage.Industry))
+                {
+                    portfolioComposition.CurrentValueAmountByIndustry[individualWeightage.Industry] = individualWeightage.TotalCurrentValue;
+                }
+                else
+                {
+                    portfolioComposition.CurrentValueAmountByIndustry[individualWeightage.Industry] += individualWeightage.TotalCurrentValue;
+                }
             }
         }
 
         private void FindAmountsBySector(IndividualStockWeightage individualWeightage, PortfolioComposition portfolioComposition)
         {
-            if (!portfolioComposition.InvestmentAmountBySector.ContainsKey(individualWeightage.Sector))
+            if (!string.IsNullOrEmpty(individualWeightage.Sector))
             {
-                portfolioComposition.InvestmentAmountBySector[individualWeightage.Sector] = individualWeightage.TotalPurchasePrice;
-            }
-            else
-            {
-                portfolioComposition.InvestmentAmountBySector[individualWeightage.Sector] += individualWeightage.TotalPurchasePrice;
-            }
+                if (!portfolioComposition.InvestmentAmountBySector.ContainsKey(individualWeightage.Sector))
+                {
+                    portfolioComposition.InvestmentAmountBySector[individualWeightage.Sector] = individualWeightage.TotalPurchasePrice;
+                }
+                else
+                {
+                    portfolioComposition.InvestmentAmountBySector[individualWeightage.Sector] += individualWeightage.TotalPurchasePrice;
+                }
 
-            if (!portfolioComposition.CurrentValueAmountBySector.ContainsKey(individualWeightage.Sector))
-            {
-                portfolioComposition.CurrentValueAmountBySector[individualWeightage.Sector] = individualWeightage.TotalCurrentValue;
-            }
-            else
-            {
-                portfolioComposition.CurrentValueAmountBySector[individualWeightage.Sector] += individualWeightage.TotalCurrentValue;
+                if (!portfolioComposition.CurrentValueAmountBySector.ContainsKey(individualWeightage.Sector))
+                {
+                    portfolioComposition.CurrentValueAmountBySector[individualWeightage.Sector] = individualWeightage.TotalCurrentValue;
+                }
+                else
+                {
+                    portfolioComposition.CurrentValueAmountBySector[individualWeightage.Sector] += individualWeightage.TotalCurrentValue;
+                }
             }
         }
 
