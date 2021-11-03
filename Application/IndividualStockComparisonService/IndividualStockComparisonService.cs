@@ -60,6 +60,7 @@ namespace Application.IndividualStockComparisonService
                         var indexReturn = new IndexReturn();
                         indexReturn.IndexTicker = indexValue.IndexTicker;
                         indexReturn.TotalCurrentValue = indexValue.TotalCurrentPrice;
+                        indexReturn.TotalReturnPercentage = ((indexValue.TotalCurrentPrice - indexValue.TotalPurchasePrice) / indexValue.TotalPurchasePrice * 100).RoundDecimal();
                         indexReturns[indexValue.IndexTicker] = indexReturn;
                     }
                     returnDetails.IndexReturns = indexReturns;
